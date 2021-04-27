@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.oauth.dao.ClientServerEntityMapper">
+  <resultMap id="BaseResultMap" type="com.oauth.entity.ClientServerEntity">
+    <id column="client_server_id" jdbcType="BIGINT" property="clientServerId" />
+    <result column="client_id" jdbcType="VARCHAR" property="clientId" />
+    <result column="resource_ids" jdbcType="VARCHAR" property="resourceIds" />
+    <result column="secret_require" jdbcType="TINYINT" property="secretRequire" />
+    <result column="scope_require" jdbcType="TINYINT" property="scopeRequire" />
+    <result column="client_secret" jdbcType="VARCHAR" property="clientSecret" />
+    <result column="scope" jdbcType="VARCHAR" property="scope" />
+    <result column="authorized_grant_types" jdbcType="VARCHAR" property="authorizedGrantTypes" />
+    <result column="web_server_redirect_uri" jdbcType="VARCHAR" property="webServerRedirectUri" />
+    <result column="access_token_validity" jdbcType="INT" property="accessTokenValidity" />
+    <result column="refresh_token_validity" jdbcType="INT" property="refreshTokenValidity" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    client_server_id, client_id, resource_ids, secret_require, scope_require, client_secret, 
+    scope, authorized_grant_types, web_server_redirect_uri, access_token_validity, 
+    refresh_token_validity
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from client_server
+    where client_server_id = #{clientServerId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from client_server
+    where client_server_id = #{clientServerId,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.oauth.entity.ClientServerEntity">
+    insert into client_server (client_server_id, client_id, resource_ids, 
+      secret_require, scope_require, client_secret, 
+      scope, authorized_grant_types, web_server_redirect_uri, 
+      access_token_validity, refresh_token_validity
+      )
+    values (#{clientServerId,jdbcType=BIGINT}, #{clientId,jdbcType=VARCHAR}, #{resourceIds,jdbcType=VARCHAR}, 
+      #{secretRequire,jdbcType=TINYINT}, #{scopeRequire,jdbcType=TINYINT}, #{clientSecret,jdbcType=VARCHAR}, 
+      #{scope,jdbcType=VARCHAR}, #{authorizedGrantTypes,jdbcType=VARCHAR}, #{webServerRedirectUri,jdbcType=VARCHAR}, 
+      #{accessTokenValidity,jdbcType=INT}, #{refreshTokenValidity,jdbcType=INT}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.oauth.entity.ClientServerEntity">
+    insert into client_server
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="clientServerId != null">
+        client_server_id,
+      </if>
+      <if test="clientId != null">
+        client_id,
+      </if>
+      <if test="resourceIds != null">
+        resource_ids,
+      </if>
+      <if test="secretRequire != null">
+        secret_require,
+      </if>
+      <if test="scopeRequire != null">
+        scope_require,
+      </if>
+      <if test="clientSecret != null">
+        client_secret,
+      </if>
+      <if test="scope != null">
+        scope,
+      </if>
+      <if test="authorizedGrantTypes != null">
+        authorized_grant_types,
+      </if>
+      <if test="webServerRedirectUri != null">
+        web_server_redirect_uri,
+      </if>
+      <if test="accessTokenValidity != null">
+        access_token_validity,
+      </if>
+      <if test="refreshTokenValidity != null">
+        refresh_token_validity,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="clientServerId != null">
+        #{clientServerId,jdbcType=BIGINT},
+      </if>
+      <if test="clientId != null">
+        #{clientId,jdbcType=VARCHAR},
+      </if>
+      <if test="resourceIds != null">
+        #{resourceIds,jdbcType=VARCHAR},
+      </if>
+      <if test="secretRequire != null">
+        #{secretRequire,jdbcType=TINYINT},
+      </if>
+      <if test="scopeRequire != null">
+        #{scopeRequire,jdbcType=TINYINT},
+      </if>
+      <if test="clientSecret != null">
+        #{clientSecret,jdbcType=VARCHAR},
+      </if>
+      <if test="scope != null">
+        #{scope,jdbcType=VARCHAR},
+      </if>
+      <if test="authorizedGrantTypes != null">
+        #{authorizedGrantTypes,jdbcType=VARCHAR},
+      </if>
+      <if test="webServerRedirectUri != null">
+        #{webServerRedirectUri,jdbcType=VARCHAR},
+      </if>
+      <if test="accessTokenValidity != null">
+        #{accessTokenValidity,jdbcType=INT},
+      </if>
+      <if test="refreshTokenValidity != null">
+        #{refreshTokenValidity,jdbcType=INT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.oauth.entity.ClientServerEntity">
+    update client_server
+    <set>
+      <if test="clientId != null">
+        client_id = #{clientId,jdbcType=VARCHAR},
+      </if>
+      <if test="resourceIds != null">
+        resource_ids = #{resourceIds,jdbcType=VARCHAR},
+      </if>
+      <if test="secretRequire != null">
+        secret_require = #{secretRequire,jdbcType=TINYINT},
+      </if>
+      <if test="scopeRequire != null">
+        scope_require = #{scopeRequire,jdbcType=TINYINT},
+      </if>
+      <if test="clientSecret != null">
+        client_secret = #{clientSecret,jdbcType=VARCHAR},
+      </if>
+      <if test="scope != null">
+        scope = #{scope,jdbcType=VARCHAR},
+      </if>
+      <if test="authorizedGrantTypes != null">
+        authorized_grant_types = #{authorizedGrantTypes,jdbcType=VARCHAR},
+      </if>
+      <if test="webServerRedirectUri != null">
+        web_server_redirect_uri = #{webServerRedirectUri,jdbcType=VARCHAR},
+      </if>
+      <if test="accessTokenValidity != null">
+        access_token_validity = #{accessTokenValidity,jdbcType=INT},
+      </if>
+      <if test="refreshTokenValidity != null">
+        refresh_token_validity = #{refreshTokenValidity,jdbcType=INT},
+      </if>
+    </set>
+    where client_server_id = #{clientServerId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.oauth.entity.ClientServerEntity">
+    update client_server
+    set client_id = #{clientId,jdbcType=VARCHAR},
+      resource_ids = #{resourceIds,jdbcType=VARCHAR},
+      secret_require = #{secretRequire,jdbcType=TINYINT},
+      scope_require = #{scopeRequire,jdbcType=TINYINT},
+      client_secret = #{clientSecret,jdbcType=VARCHAR},
+      scope = #{scope,jdbcType=VARCHAR},
+      authorized_grant_types = #{authorizedGrantTypes,jdbcType=VARCHAR},
+      web_server_redirect_uri = #{webServerRedirectUri,jdbcType=VARCHAR},
+      access_token_validity = #{accessTokenValidity,jdbcType=INT},
+      refresh_token_validity = #{refreshTokenValidity,jdbcType=INT}
+    where client_server_id = #{clientServerId,jdbcType=BIGINT}
+  </update>
+
+  <resultMap id="Client" extends="BaseResultMap" type="com.oauth.entity.ClientServerEntity">
+    <!--一对多，方式一-->
+        <collection property="authorities" ofType="com.oauth.entity.ClientAuthoritiesEntity" >
+            <id column="client_authorities_id" jdbcType="BIGINT" property="clientAuthoritiesId" />
+            <result column="authorities" jdbcType="VARCHAR" property="authorities" />
+            <result column="key_client_server_id" jdbcType="BIGINT" property="clientServerId" />
+        </collection>
+  </resultMap>
+
+  <select id="selectByClientId" resultMap="Client">
+    select 
+      t1.client_server_id, client_id, resource_ids, secret_require, scope_require, client_secret, 
+      scope, authorized_grant_types, web_server_redirect_uri, access_token_validity, 
+      refresh_token_validity,t2.client_server_id key_client_server_id,client_authorities_id,authorities
+    from client_server t1
+     left join client_authorities t2 on t1.client_server_id = t2.client_server_id
+    where 
+      1=1
+      <if test = "clientId != null and clientId != ''">
+        and t1.client_id = #{clientId}
+      </if>
+  </select>
+
+</mapper>

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.oauth.dao.ClientAuthoritiesEntityMapper">
+  <resultMap id="BaseResultMap" type="com.oauth.entity.ClientAuthoritiesEntity">
+    <id column="client_authorities_id" jdbcType="BIGINT" property="clientAuthoritiesId" />
+    <result column="authorities" jdbcType="VARCHAR" property="authorities" />
+    <result column="client_server_id" jdbcType="BIGINT" property="clientServerId" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    client_authorities_id, authorities, client_server_id
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from client_authorities
+    where client_authorities_id = #{clientAuthoritiesId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from client_authorities
+    where client_authorities_id = #{clientAuthoritiesId,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.oauth.entity.ClientAuthoritiesEntity">
+    insert into client_authorities (client_authorities_id, authorities, 
+      client_server_id)
+    values (#{clientAuthoritiesId,jdbcType=BIGINT}, #{authorities,jdbcType=VARCHAR}, 
+      #{clientServerId,jdbcType=BIGINT})
+  </insert>
+  <insert id="insertSelective" parameterType="com.oauth.entity.ClientAuthoritiesEntity">
+    insert into client_authorities
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="clientAuthoritiesId != null">
+        client_authorities_id,
+      </if>
+      <if test="authorities != null">
+        authorities,
+      </if>
+      <if test="clientServerId != null">
+        client_server_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="clientAuthoritiesId != null">
+        #{clientAuthoritiesId,jdbcType=BIGINT},
+      </if>
+      <if test="authorities != null">
+        #{authorities,jdbcType=VARCHAR},
+      </if>
+      <if test="clientServerId != null">
+        #{clientServerId,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.oauth.entity.ClientAuthoritiesEntity">
+    update client_authorities
+    <set>
+      <if test="authorities != null">
+        authorities = #{authorities,jdbcType=VARCHAR},
+      </if>
+      <if test="clientServerId != null">
+        client_server_id = #{clientServerId,jdbcType=BIGINT},
+      </if>
+    </set>
+    where client_authorities_id = #{clientAuthoritiesId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.oauth.entity.ClientAuthoritiesEntity">
+    update client_authorities
+    set authorities = #{authorities,jdbcType=VARCHAR},
+      client_server_id = #{clientServerId,jdbcType=BIGINT}
+    where client_authorities_id = #{clientAuthoritiesId,jdbcType=BIGINT}
+  </update>
+</mapper>

@@ -1,0 +1,41 @@
+server:
+  port: 20020
+
+mybatis-plus:
+  mapper-locations: classpath:mapper/*Mapper.xml
+  type-aliases-package: com.oauth.entity
+
+spring:
+  profiles:
+    active: dev
+
+  application:
+    name: oauth2-auth
+  
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 10.233.32.22:8848
+        namespace: dev  
+
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    url: jdbc:mysql://192.168.80.129:3306/jurisdiction?serverTimezone=GMT
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root 
+    password: wh3164335
+
+  redis:
+    database: 1
+    port: 30000
+    host: 10.233.32.21
+    password: 
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
