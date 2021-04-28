@@ -11,8 +11,8 @@
     <result column="scope" jdbcType="VARCHAR" property="scope" />
     <result column="authorized_grant_types" jdbcType="VARCHAR" property="authorizedGrantTypes" />
     <result column="web_server_redirect_uri" jdbcType="VARCHAR" property="webServerRedirectUri" />
-    <result column="access_token_validity" jdbcType="INT" property="accessTokenValidity" />
-    <result column="refresh_token_validity" jdbcType="INT" property="refreshTokenValidity" />
+    <result column="access_token_validity" jdbcType="INTEGER" property="accessTokenValidity" />
+    <result column="refresh_token_validity" jdbcType="INTEGER" property="refreshTokenValidity" />
   </resultMap>
   <sql id="Base_Column_List">
     client_server_id, client_id, resource_ids, secret_require, scope_require, client_secret, 
@@ -38,7 +38,7 @@
     values (#{clientServerId,jdbcType=BIGINT}, #{clientId,jdbcType=VARCHAR}, #{resourceIds,jdbcType=VARCHAR}, 
       #{secretRequire,jdbcType=TINYINT}, #{scopeRequire,jdbcType=TINYINT}, #{clientSecret,jdbcType=VARCHAR}, 
       #{scope,jdbcType=VARCHAR}, #{authorizedGrantTypes,jdbcType=VARCHAR}, #{webServerRedirectUri,jdbcType=VARCHAR}, 
-      #{accessTokenValidity,jdbcType=INT}, #{refreshTokenValidity,jdbcType=INT}
+      #{accessTokenValidity,jdbcType=INTEGER}, #{refreshTokenValidity,jdbcType=INTEGER}
       )
   </insert>
   <insert id="insertSelective" parameterType="com.oauth.entity.ClientServerEntity">
@@ -107,10 +107,10 @@
         #{webServerRedirectUri,jdbcType=VARCHAR},
       </if>
       <if test="accessTokenValidity != null">
-        #{accessTokenValidity,jdbcType=INT},
+        #{accessTokenValidity,jdbcType=INTEGER},
       </if>
       <if test="refreshTokenValidity != null">
-        #{refreshTokenValidity,jdbcType=INT},
+        #{refreshTokenValidity,jdbcType=INTEGER},
       </if>
     </trim>
   </insert>
@@ -142,10 +142,10 @@
         web_server_redirect_uri = #{webServerRedirectUri,jdbcType=VARCHAR},
       </if>
       <if test="accessTokenValidity != null">
-        access_token_validity = #{accessTokenValidity,jdbcType=INT},
+        access_token_validity = #{accessTokenValidity,jdbcType=INTEGER},
       </if>
       <if test="refreshTokenValidity != null">
-        refresh_token_validity = #{refreshTokenValidity,jdbcType=INT},
+        refresh_token_validity = #{refreshTokenValidity,jdbcType=INTEGER},
       </if>
     </set>
     where client_server_id = #{clientServerId,jdbcType=BIGINT}
@@ -160,8 +160,8 @@
       scope = #{scope,jdbcType=VARCHAR},
       authorized_grant_types = #{authorizedGrantTypes,jdbcType=VARCHAR},
       web_server_redirect_uri = #{webServerRedirectUri,jdbcType=VARCHAR},
-      access_token_validity = #{accessTokenValidity,jdbcType=INT},
-      refresh_token_validity = #{refreshTokenValidity,jdbcType=INT}
+      access_token_validity = #{accessTokenValidity,jdbcType=INTEGER},
+      refresh_token_validity = #{refreshTokenValidity,jdbcType=INTEGER}
     where client_server_id = #{clientServerId,jdbcType=BIGINT}
   </update>
 
