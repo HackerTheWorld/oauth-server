@@ -40,24 +40,27 @@ public class DepartmentServiceImpl implements DepartmentService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void saveAndUpdateDepartment(JSONObject jsonObject) {
-        long departmentId = jsonObject.optLong("departmentId", -1);
-        int sort = jsonObject.optInt("sort", -1);
+        long departmentId = jsonObject.optLong("departmentId", 0);
+        Integer sort = jsonObject.optInt("sort", 0);
         String departmentName = jsonObject.optString("departmentName", "");
-        int status = jsonObject.optInt("status");
+        int status = jsonObject.optInt("status",0);
 
         DepartmentEntity department = new DepartmentEntity();
         department.setDepartmentName(departmentName);
         department.setSort(sort);
         department.setStatus(status);
-        if (departmentId == -1) {
-            departmentEntityMapper.insertSelective(department);
-        } else {
-            department.setDepartmentId(departmentId);
-            departmentEntityMapper.updateByPrimaryKeySelective(department);
+        if(StringUtils.isNotBlank(departmentName)){
+            if (departmentId == 0) {
+                departmentEntityMapper.insertSelective(department);
+            } else {
+                department.setDepartmentId(departmentId);
+                departmentEntityMapper.updateByPrimaryKeySelective(department);
+            }
+            
+            saveLeader(jsonObject.optJSONArray("leader"),department.getDepartmentId());
+            saveParent(jsonObject.optJSONArray("parent"),department.getDepartmentId());
         }
-        
-        saveLeader(jsonObject.optJSONArray("leader"),department.getDepartmentId());
-        saveParent(jsonObject.optJSONArray("parent"),department.getDepartmentId());
+
     }
 
     private void saveLeader(JSONArray leaderArray,long departmentId){
@@ -65,11 +68,11 @@ public class DepartmentServiceImpl implements DepartmentService {
             for (int i = 0; i < leaderArray.length(); i++) {
                 JSONObject leaderObject = leaderArray.getJSONObject(i);
                 long userId = leaderObject.getLong("userId");
-                long departmentLeaderId = leaderObject.optLong("departmentLeaderId", -1);
+                long departmentLeaderId = leaderObject.optLong("departmentLeaderId", 0);
                 DepartmentLeaderEntity departmentLeaderEntity = new DepartmentLeaderEntity();
                 departmentLeaderEntity.setDepartmentId(departmentId);
                 departmentLeaderEntity.setUserId(userId);
-                if (departmentLeaderId == -1) {
+                if (departmentLeaderId == 0) {
                     departmentLeaderEntityMapper.insertSelective(departmentLeaderEntity);
                 } else {
                     departmentLeaderEntity.setDepartmentLeaderId(departmentLeaderId);
@@ -86,12 +89,12 @@ public class DepartmentServiceImpl implements DepartmentService {
                 JSONObject parentObject = parentArray.getJSONObject(i);
                 long parentId = parentObject.optLong("parentId");
                 String parentPath = parentObject.optString("parentPath","");
-                long departmentRelationshipId = parentObject.optLong("departmentRelationshipId",-1);
+                long departmentRelationshipId = parentObject.optLong("departmentRelationshipId",0);
                 DepartmentRelationshipEntity departmentRelationshipEntity = new DepartmentRelationshipEntity();
                 departmentRelationshipEntity.setDepartmentId(departmentId);
                 departmentRelationshipEntity.setDepartmentParentId(parentId);
                 departmentRelationshipEntity.setDepartmentPath(parentPath+parentId+"|");
-                if (departmentRelationshipId == -1) {
+                if (departmentRelationshipId == 0) {
                     departmentRelationshipEntityMapper.insertSelective(departmentRelationshipEntity);
                 } else {
                     departmentRelationshipEntity.setDepartmentRelationshipId(departmentRelationshipId);

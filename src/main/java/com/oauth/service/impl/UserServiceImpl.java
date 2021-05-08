@@ -10,6 +10,8 @@ import com.oauth.service.UserService;
 import com.oauth.vo.User;
 import com.oauth.vo.UserPrincipal;
 
+import org.apache.commons.lang3.StringUtils;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cglib.beans.BeanCopier;
 import org.springframework.security.authentication.CredentialsExpiredException;
@@ -18,6 +20,8 @@ import org.springframework.security.authentication.LockedException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -53,6 +57,27 @@ public class UserServiceImpl implements UserService {
     bCopier.copy(userEntity, user, userConverter);
     user.setId(userEntity.getUserId());
     return user;
+  }
+
+  @Override
+  @Transactional(rollbackFor = Exception.class)
+  public void saveAndUpdateUserInfor(JSONObject jsonObject) throws Exception {
+    Long userId = jsonObject.optLong("userId",0);
+    String username = jsonObject.optString("username","");
+    String password = jsonObject.optString("password","");
+    if(StringUtils.isBlank(username) && userId == -1){
+      throw new Exception("用户名不能为空");
+    }else{
+      if(userId == -1 && !CollectionUtils.isEmpty(userEntityMapper.selectByUsername(username,null))){
+        throw new Exception("用户名已存在");
+      }
+    }
+    if(StringUtils.isBlank(password) && userId == -1 ){
+      throw new Exception("密码不能为空");
+    }
+    
+    
+    
   }
 
 }

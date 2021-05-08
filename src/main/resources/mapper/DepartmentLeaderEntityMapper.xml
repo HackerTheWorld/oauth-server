@@ -28,24 +28,24 @@
   <insert id="insertSelective" parameterType="com.oauth.entity.DepartmentLeaderEntity">
     insert into department_leader
     <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="departmentLeaderId != null">
+      <if test="departmentLeaderId != null and departmentLeaderId != 0">
         department_leader_id,
       </if>
-      <if test="departmentId != null">
+      <if test="departmentId != null and departmentId != 0">
         department_id,
       </if>
-      <if test="userId != null">
+      <if test="userId != null and userId != 0">
         user_id,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="departmentLeaderId != null">
+      <if test="departmentLeaderId != null and departmentLeaderId != 0">
         #{departmentLeaderId,jdbcType=BIGINT},
       </if>
-      <if test="departmentId != null">
+      <if test="departmentId != null and departmentId != 0">
         #{departmentId,jdbcType=BIGINT},
       </if>
-      <if test="userId != null">
+      <if test="userId != null and userId != 0">
         #{userId,jdbcType=BIGINT},
       </if>
     </trim>
@@ -53,10 +53,10 @@
   <update id="updateByPrimaryKeySelective" parameterType="com.oauth.entity.DepartmentLeaderEntity">
     update department_leader
     <set>
-      <if test="departmentId != null">
+      <if test="departmentId != null and departmentId != 0">
         department_id = #{departmentId,jdbcType=BIGINT},
       </if>
-      <if test="userId != null">
+      <if test="userId != null and userId != 0">
         user_id = #{userId,jdbcType=BIGINT},
       </if>
     </set>

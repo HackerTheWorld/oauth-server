@@ -32,45 +32,45 @@
       <if test="departmentId != null">
         department_id,
       </if>
-      <if test="departmentName != null">
+      <if test="departmentName != null and departmentName != ''">
         department_name,
       </if>
-      <if test="sort != null">
+      <if test="sort != null and sort != -1">
         sort,
       </if>
       <if test="createdTime != null">
         created_time,
       </if>
-      <if test="status != null">
+      <if test="status != null and status != 0">
         status,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="departmentId != null"> #{departmentId,jdbcType=BIGINT},
       </if>
-      <if test="departmentName != null"> #{departmentName,jdbcType=VARCHAR},
+      <if test="departmentName != null and departmentName != ''"> #{departmentName,jdbcType=VARCHAR},
       </if>
-      <if test="sort != null"> #{sort,jdbcType=INTEGER},
+      <if test="sort != null and sort != -1"> #{sort,jdbcType=INTEGER},
       </if>
       <if test="createdTime != null"> #{createdTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="status != null"> #{status,jdbcType=INTEGER},
+      <if test="status != null and status != 0"> #{status,jdbcType=INTEGER},
       </if>
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.oauth.entity.DepartmentEntity">
     update department
     <set>
-      <if test="departmentName != null">
+      <if test="departmentName != null and departmentName != ''">
         department_name = #{departmentName,jdbcType=VARCHAR},
       </if>
-      <if test="sort != null">
+      <if test="sort != null and sort != -1">
         sort = #{sort,jdbcType=INTEGER},
       </if>
       <if test="createdTime != null">
         created_time = #{createdTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="status != null">
+      <if test="status != null and status != 0">
         status = #{status,jdbcType=INTEGER},
       </if>
     </set>

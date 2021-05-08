@@ -5,10 +5,9 @@
     <id column="department_user_id" jdbcType="BIGINT" property="departmentUserId" />
     <result column="department_id" jdbcType="BIGINT" property="departmentId" />
     <result column="user_id" jdbcType="BIGINT" property="userId" />
-    <result column="post_id" jdbcType="BIGINT" property="postId" />
   </resultMap>
   <sql id="Base_Column_List">
-    department_user_id, department_id, user_id, post_id
+    department_user_id, department_id, user_id
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
@@ -21,10 +20,8 @@
     where department_user_id = #{departmentUserId,jdbcType=BIGINT}
   </delete>
   <insert id="insert" parameterType="com.oauth.entity.DepartmentUserEntity">
-    insert into department_user (department_user_id, department_id, user_id, 
-      post_id)
-    values (#{departmentUserId,jdbcType=BIGINT}, #{departmentId,jdbcType=BIGINT}, #{userId,jdbcType=BIGINT}, 
-      #{postId,jdbcType=BIGINT})
+    insert into department_user (department_user_id, department_id, user_id)
+    values (#{departmentUserId,jdbcType=BIGINT}, #{departmentId,jdbcType=BIGINT}, #{userId,jdbcType=BIGINT})
   </insert>
   <insert id="insertSelective" parameterType="com.oauth.entity.DepartmentUserEntity">
     insert into department_user
@@ -38,9 +35,6 @@
       <if test="userId != null">
         user_id,
       </if>
-      <if test="postId != null">
-        post_id,
-      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="departmentUserId != null">
@@ -51,9 +45,6 @@
       </if>
       <if test="userId != null">
         #{userId,jdbcType=BIGINT},
-      </if>
-      <if test="postId != null">
-        #{postId,jdbcType=BIGINT},
       </if>
     </trim>
   </insert>
@@ -66,17 +57,13 @@
       <if test="userId != null">
         user_id = #{userId,jdbcType=BIGINT},
       </if>
-      <if test="postId != null">
-        post_id = #{postId,jdbcType=BIGINT},
-      </if>
     </set>
     where department_user_id = #{departmentUserId,jdbcType=BIGINT}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.oauth.entity.DepartmentUserEntity">
     update department_user
     set department_id = #{departmentId,jdbcType=BIGINT},
-      user_id = #{userId,jdbcType=BIGINT},
-      post_id = #{postId,jdbcType=BIGINT}
+      user_id = #{userId,jdbcType=BIGINT}
     where department_user_id = #{departmentUserId,jdbcType=BIGINT}
   </update>
 </mapper>

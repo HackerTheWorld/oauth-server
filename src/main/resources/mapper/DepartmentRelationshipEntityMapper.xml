@@ -36,30 +36,30 @@
   <insert id="insertSelective" parameterType="com.oauth.entity.DepartmentRelationshipEntity">
     insert into department_relationship
     <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="departmentRelationshipId != null">
+      <if test="departmentRelationshipId != null and departmentRelationshipId != 0">
         department_relationship_id,
       </if>
-      <if test="departmentId != null">
+      <if test="departmentId != null and departmentId != 0">
         department_id,
       </if>
-      <if test="departmentParentId != null">
+      <if test="departmentParentId != null and departmentParentId != 0">
         department_parent_id,
       </if>
-      <if test="departmentPath != null">
+      <if test="departmentPath != null and departmentPath != ''">
         department_path,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="departmentRelationshipId != null">
+      <if test="departmentRelationshipId != null and departmentRelationshipId != 0">
         #{departmentRelationshipId,jdbcType=BIGINT},
       </if>
-      <if test="departmentId != null">
+      <if test="departmentId != null and departmentId != 0">
         #{departmentId,jdbcType=BIGINT},
       </if>
-      <if test="departmentParentId != null">
+      <if test="departmentParentId != null and departmentParentId != 0">
         #{departmentParentId,jdbcType=BIGINT},
       </if>
-      <if test="departmentPath != null">
+      <if test="departmentPath != null and departmentPath != ''">
         #{departmentPath,jdbcType=LONGVARCHAR},
       </if>
     </trim>
@@ -67,13 +67,13 @@
   <update id="updateByPrimaryKeySelective" parameterType="com.oauth.entity.DepartmentRelationshipEntity">
     update department_relationship
     <set>
-      <if test="departmentId != null">
+      <if test="departmentId != null and departmentId != 0">
         department_id = #{departmentId,jdbcType=BIGINT},
       </if>
-      <if test="departmentParentId != null">
+      <if test="departmentParentId != null and departmentParentId != 0">
         department_parent_id = #{departmentParentId,jdbcType=BIGINT},
       </if>
-      <if test="departmentPath != null">
+      <if test="departmentPath != null and departmentPath != ''">
         department_path = #{departmentPath,jdbcType=LONGVARCHAR},
       </if>
     </set>

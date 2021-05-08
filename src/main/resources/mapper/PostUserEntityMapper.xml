@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.oauth.dao.PostUserEntityMapper">
+  <resultMap id="BaseResultMap" type="com.oauth.entity.PostUserEntity">
+    <id column="post_user_id" jdbcType="BIGINT" property="postUserId" />
+    <result column="user_id" jdbcType="BIGINT" property="userId" />
+    <result column="post_id" jdbcType="BIGINT" property="postId" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    post_user_id, user_id, post_id
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from post_user
+    where post_user_id = #{postUserId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from post_user
+    where post_user_id = #{postUserId,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.oauth.entity.PostUserEntity">
+    insert into post_user (post_user_id, user_id, post_id
+      )
+    values (#{postUserId,jdbcType=BIGINT}, #{userId,jdbcType=BIGINT}, #{postId,jdbcType=BIGINT}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.oauth.entity.PostUserEntity">
+    insert into post_user
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="postUserId != null and postUserId != 0">
+        post_user_id,
+      </if>
+      <if test="userId != null and userId != 0">
+        user_id,
+      </if>
+      <if test="postId != null and postId != 0">
+        post_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="postUserId != null and postUserId != 0">
+        #{postUserId,jdbcType=BIGINT},
+      </if>
+      <if test="userId != null and userId != 0">
+        #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="postId != null and postId != 0">
+        #{postId,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.oauth.entity.PostUserEntity">
+    update post_user
+    <set>
+      <if test="userId != null and userId != 0">
+        user_id = #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="postId != null and postId != 0">
+        post_id = #{postId,jdbcType=BIGINT},
+      </if>
+    </set>
+    where post_user_id = #{postUserId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.oauth.entity.PostUserEntity">
+    update post_user
+    set user_id = #{userId,jdbcType=BIGINT},
+      post_id = #{postId,jdbcType=BIGINT}
+    where post_user_id = #{postUserId,jdbcType=BIGINT}
+  </update>
+</mapper>
