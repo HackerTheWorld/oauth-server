@@ -1,0 +1,19 @@
+{
+    "departmentId": "部门id,判断新增或修改",
+    "departmentName": "部门名称",
+    "sort": "排序",
+    "status": "状态",
+    "leader": [
+        {
+            "userId": "用户id",
+            "departmentLeaderId": "判读,新增或修改领导人"
+        }
+    ],
+    "parent": [
+        {
+            "departmentRelationshipId": "判断是新增或修改上下部门关系",
+            "parentId": "上级部门Id",
+            "parentPath": "上级部门路径"
+        }
+    ]
+}

@@ -4,8 +4,8 @@ import javax.security.auth.login.AccountExpiredException;
 
 import com.oauth.contons.MessageConstant;
 import com.oauth.converter.UserConverter;
-import com.oauth.dao.UserEntityMapper;
-import com.oauth.entity.UserEntity;
+import com.oauth.dao.UserInforEntityMapper;
+import com.oauth.entity.UserInforEntity;
 import com.oauth.service.UserService;
 import com.oauth.vo.User;
 import com.oauth.vo.UserPrincipal;
@@ -23,7 +23,7 @@ import org.springframework.stereotype.Service;
 public class UserServiceImpl implements UserService {
 
   @Autowired
-  private UserEntityMapper userEntityMapper;
+  private UserInforEntityMapper userEntityMapper;
 
   @Override
   public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -47,10 +47,11 @@ public class UserServiceImpl implements UserService {
 
   private User findUsers(String username) {
     User user = new User();
-    UserEntity userEntity = userEntityMapper.selectByUsername(username);
+    UserInforEntity userEntity = userEntityMapper.selectByUsername(username,null).get(0);
     UserConverter userConverter = new UserConverter();
-    BeanCopier bCopier = BeanCopier.create(UserEntity.class, User.class, true);
+    BeanCopier bCopier = BeanCopier.create(UserInforEntity.class, User.class, true);
     bCopier.copy(userEntity, user, userConverter);
+    user.setId(userEntity.getUserId());
     return user;
   }
 

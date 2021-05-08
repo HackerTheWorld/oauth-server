@@ -2,14 +2,20 @@ package com.oauth.entity;
 
 import java.util.List;
 
-public class UserEntity {
-    private Long id;
+public class UserInforEntity {
+    private Long userId;
 
     private String username;
 
     private String password;
 
     private Integer status;
+
+    private String phone;
+
+    private String realname;
+
+    private String email;
 
     private List<ClientAuthoritiesEntity> roles;
 
@@ -21,12 +27,12 @@ public class UserEntity {
         this.roles = roles;
     }
 
-    public Long getId() {
-        return id;
+    public Long getUserId() {
+        return userId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
     public String getUsername() {
@@ -51,5 +57,29 @@ public class UserEntity {
 
     public void setStatus(Integer status) {
         this.status = status;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone == null ? null : phone.trim();
+    }
+
+    public String getRealname() {
+        return realname;
+    }
+
+    public void setRealname(String realname) {
+        this.realname = realname == null ? null : realname.trim();
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email == null ? null : email.trim();
     }
 }
