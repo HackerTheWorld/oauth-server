@@ -26,8 +26,7 @@
     insert into post (post_id, post_code, post_name, 
       sort, status, created_time
       )
-    values (#{postId,jdbcType=BIGINT}, #{postCode,jdbcType=VARCHAR}, #{postName,jdbcType=VARCHAR}, 
-      #{sort,jdbcType=INTEGER}, #{status,jdbcType=INTEGER}, #{createdTime,jdbcType=TIMESTAMP}
+    values (#{postId,jdbcType=BIGINT}, #{postCode,jdbcType=VARCHAR}, #{postName,jdbcType=VARCHAR}, #{sort,jdbcType=INTEGER}, #{status,jdbcType=INTEGER}, #{createdTime,jdbcType=TIMESTAMP}
       )
   </insert>
   <insert id="insertSelective" parameterType="com.oauth.entity.PostEntity">
@@ -53,23 +52,17 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="postId != null">
-        #{postId,jdbcType=BIGINT},
+      <if test="postId != null"> #{postId,jdbcType=BIGINT},
       </if>
-      <if test="postCode != null">
-        #{postCode,jdbcType=VARCHAR},
+      <if test="postCode != null"> #{postCode,jdbcType=VARCHAR},
       </if>
-      <if test="postName != null">
-        #{postName,jdbcType=VARCHAR},
+      <if test="postName != null"> #{postName,jdbcType=VARCHAR},
       </if>
-      <if test="sort != null">
-        #{sort,jdbcType=INTEGER},
+      <if test="sort != null"> #{sort,jdbcType=INTEGER},
       </if>
-      <if test="status != null">
-        #{status,jdbcType=INTEGER},
+      <if test="status != null"> #{status,jdbcType=INTEGER},
       </if>
-      <if test="createdTime != null">
-        #{createdTime,jdbcType=TIMESTAMP},
+      <if test="createdTime != null"> #{createdTime,jdbcType=TIMESTAMP},
       </if>
     </trim>
   </insert>
@@ -103,4 +96,24 @@
       created_time = #{createdTime,jdbcType=TIMESTAMP}
     where post_id = #{postId,jdbcType=BIGINT}
   </update>
+
+  <select id="selectPost" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from post
+    where 1=1
+    <if test="postId != null and postId != 0">
+      and post_id = #{postId,jdbcType=BIGINT}
+    </if>
+    <if test="postName != null and postName != ''">
+      and post_name = #{postName,jdbcType=VARCHAR}
+    </if>
+    <if test="postCode != null and postCode != ''">
+      and post_code = #{postCode,jdbcType=VARCHAR}
+    </if>
+    <if test="status != null and status != 0">
+      and status = #{status,jdbcType=INTEGER}
+    </if>
+  </select>
+
 </mapper>

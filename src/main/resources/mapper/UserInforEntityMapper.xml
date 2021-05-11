@@ -27,11 +27,9 @@
     insert into user_infor (user_id, username, password, 
       status, phone, realname, 
       email)
-    values (#{userId,jdbcType=BIGINT}, #{username,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, 
-      #{status,jdbcType=INTEGER}, #{phone,jdbcType=VARCHAR}, #{realname,jdbcType=VARCHAR}, 
-      #{email,jdbcType=VARCHAR})
+    values (#{userId,jdbcType=BIGINT}, #{username,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER}, #{phone,jdbcType=VARCHAR}, #{realname,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR})
   </insert>
-  <insert id="insertSelective" parameterType="com.oauth.entity.UserInforEntity">
+  <insert id="insertSelective" parameterType="com.oauth.entity.UserInforEntity" useGeneratedKeys="true" keyProperty="userId">
     insert into user_infor
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="userId != null and userId != 0">
@@ -57,26 +55,19 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="userId != null and userId != 0">
-        #{userId,jdbcType=BIGINT},
+      <if test="userId != null and userId != 0"> #{userId,jdbcType=BIGINT},
       </if>
-      <if test="username != null and username != ''">
-        #{username,jdbcType=VARCHAR},
+      <if test="username != null and username != ''"> #{username,jdbcType=VARCHAR},
       </if>
-      <if test="password != null and password != ''">
-        #{password,jdbcType=VARCHAR},
+      <if test="password != null and password != ''"> #{password,jdbcType=VARCHAR},
       </if>
-      <if test="status != null and status != 0">
-        #{status,jdbcType=INTEGER},
+      <if test="status != null and status != 0"> #{status,jdbcType=INTEGER},
       </if>
-      <if test="phone != null and phone != ''">
-        #{phone,jdbcType=VARCHAR},
+      <if test="phone != null and phone != ''"> #{phone,jdbcType=VARCHAR},
       </if>
-      <if test="realname != null and realname != ''">
-        #{realname,jdbcType=VARCHAR},
+      <if test="realname != null and realname != ''"> #{realname,jdbcType=VARCHAR},
       </if>
-      <if test="email != null and email != ''">
-        #{email,jdbcType=VARCHAR},
+      <if test="email != null and email != ''"> #{email,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -115,13 +106,13 @@
     where user_id = #{userId,jdbcType=BIGINT}
   </update>
 
-<resultMap id="UserClient" extends="BaseResultMap" type="com.oauth.entity.UserInforEntity">
+  <resultMap id="UserClient" extends="BaseResultMap" type="com.oauth.entity.UserInforEntity">
     <!--一对多，方式一-->
-        <collection property="roles" ofType="com.oauth.entity.ClientAuthoritiesEntity" >
-            <id column="client_authorities_id" jdbcType="BIGINT" property="clientAuthoritiesId" />
-            <result column="authorities" jdbcType="VARCHAR" property="authorities" />
-            <result column="key_client_server_id" jdbcType="BIGINT" property="clientServerId" />
-        </collection>
+    <collection property="roles" ofType="com.oauth.entity.ClientAuthoritiesEntity">
+      <id column="client_authorities_id" jdbcType="BIGINT" property="clientAuthoritiesId" />
+      <result column="authorities" jdbcType="VARCHAR" property="authorities" />
+      <result column="key_client_server_id" jdbcType="BIGINT" property="clientServerId" />
+    </collection>
   </resultMap>
 
   <select id="selectByUsername" resultMap="UserClient">
@@ -131,14 +122,13 @@
     from user_infor t1 
       left join user_client t2 on t1.user_id = t2.user_id
       left join client_authorities t3 on t2.client_authorities_id = t3.client_authorities_id  
-    where 
-      1=1
-      <if test="username != null and username != ''">
+    where 1=1
+    <if test="username != null and username != ''">
         and t1.username = #{username}
-      </if>   
-      <if test="userId != null">
+    </if>
+    <if test="userId != null and userId != 0">
         and t1.user_id = #{userId}
-      </if>  
+    </if>
   </select>
 
   <select id="selectDepartmentByUsername" resultType="java.lang.Long">
@@ -147,13 +137,128 @@
       t2.department_id
     from user_infor t1 
       left join department_leader t2 on t1.user_id = t2.user_id 
-    where 
-      1=1
-      <if test="username != null and username != ''">
-        and t1.username = #{username}
-      </if>   
-      <if test="userId != null">
+    where 1=1
+    <if test="username != null and username != ''">
+        and t1.username like concat('%',#{username},'%')
+    </if>
+    <if test="userId != null  and userId != 0">
         and t1.user_id = #{userId}
-      </if>  
+    </if>
+  </select>
+
+  <select id="selectPostUserByName" resultType="java.lang.Long">
+    select t2.user_id userId
+    from post_user t1 
+    inner left post t2 on t2.post_id = t1.post_id
+    where 1=1
+    <if test="postId != null and postId != 0">
+        and t2.post_id = #{postId}
+    </if>
+    <if test="postName != null and postName != ''">
+        and t2.post_name like concat('%',#{postName},'%')
+    </if>
+    <if test="postCode != null and postId != 0">
+        and t2.post_code = #{postCode}
+    </if>
+  </select>
+
+  <select id="selectDepartmentUserByName" resultType="java.lang.Long">
+    select t2.user_id userId
+    from department_user t1 
+    left join department t2 on t2.user_id = t1.user_id
+    where 1=1
+    <if test="departmentId != null and departmentId != 0">
+        and t2.department_id = #{departmentId}
+    </if>
+    <if test="departmentName != null and departmentName != ''">
+        and t2.department_name like concat('%',#{departmentName},'%')
+    </if>
+  </select>
+
+  <select id="selectDepartmentUserByName" resultType="java.lang.Long">
+    select t2.user_id userId
+    from department_user t1 
+    left join department t2 on t2.user_id = t1.user_id
+    where 1=1
+    <if test="departmentId != null and departmentId != 0">
+        and t2.department_id = #{departmentId}
+    </if>
+    <if test="departmentName != null and departmentName != ''">
+        and t2.department_name like concat('%',#{departmentName},'%')
+    </if>
+  </select>
+
+  <select id="selectParentUserByName" resultType="java.lang.Long">
+    select t1.user_id userId
+    from parent_user t1 
+    left join user_infor t2 on t2.user_parent_id = t1.user_id
+    where 1=1
+    <if test="parentId != null and departmentId != 0">
+        and t2.user_parent_id = #{departmentId}
+    </if>
+    <if test="userName != null and userName != ''">
+        and t2.user_name like concat('%',#{userName},'%')
+    </if>
+  </select>
+
+  <resultMap id="UserInforVo" extends="BaseResultMap" type="com.oauth.vo.UserInforVo">
+    <!--一对多，方式一-->
+    <collection property="parent" ofType="com.oauth.entity.UserInforEntity">
+      <id column="parent_user_id" jdbcType="BIGINT" property="userId" />
+      <result column="parent_username" jdbcType="VARCHAR" property="username" />
+      <result column="parent_phone" jdbcType="VARCHAR" property="phone" />
+      <result column="parent_realname" jdbcType="VARCHAR" property="realname" />
+      <result column="parent_email" jdbcType="VARCHAR" property="email" />
+      <result column="parent_status" jdbcType="INTEGER" property="status" />
+    </collection>
+    <collection property="departmentUser" ofType="com.oauth.entity.DepartmentEntity">
+      <id column="department_id" jdbcType="BIGINT" property="departmentId" />
+      <result column="department_name" jdbcType="VARCHAR" property="departmentName" />
+      <result column="department_sort" jdbcType="INTEGER" property="sort" />
+      <result column="department_created_time" jdbcType="TIMESTAMP" property="createdTime" />
+      <result column="department_status" jdbcType="INTEGER" property="status" />
+    </collection>
+    <collection property="postUserEntity" ofType="com.oauth.entity.PostEntity">
+      <id column="post_id" jdbcType="BIGINT" property="postId" />
+      <result column="post_code" jdbcType="VARCHAR" property="postCode" />
+      <result column="post_name" jdbcType="VARCHAR" property="postName" />
+      <result column="post_sort" jdbcType="INTEGER" property="sort" />
+      <result column="post_created_time" jdbcType="TIMESTAMP" property="createdTime" />
+      <result column="post_status" jdbcType="INTEGER" property="status" />
+    </collection>
+  </resultMap>
+
+  <select id="selectUserInforVos" resultMap="UserInforVo">
+    select 
+      t1.user_id, t1.username, t1.realname,t1.phone,t1.email, t1.status,
+      t2.user_id parent_user_id, t2.username parent_username, t2.realname parent_realname,t2.phone parent_phone,t2.email parent_email, t2.status parent_status,
+      t3.department_id,t3.department_name,t3.sort department_sort,t3.created_time department_created_time,t3.status department_status,
+      t4.post_id,t4.post_code,t4.post_name,t4.sort post_sort,t4.status post_status,t4.created_time post_created_time
+    from user_infor t1
+      left join parent_user b on b.user_id = t1.user_id
+      left join user_infor t2 on t2.user_id = b.parent_user_id
+      left join department_user c on c.user_id = t1.user_id
+      left join department t3 on t3.department_id = c.department_id
+      left join post_user d on d.user_id = t1.user_id
+      left join post t4 on t4.post_id = d.post_id
+    where
+      1=1
+      <if test="param.username != null and param.username != ''">
+        and t1.username = #{param.username}
+      </if>
+      <if test="param.status != null and param.status != 0">
+        and t1.status = #{param.status}
+      </if>
+      <if test="param.phone != null and param.phone != ''">
+        and t1.phone = #{param.phone}
+      </if>
+      <if test="param.email != null and param.email != ''">
+        and t1.email = #{param.email}
+      </if>
+      <if test="userIds != null and userIds.size > 0">
+        <foreach collection="userIds" item="item" index="index" open="and t1.user_id in (" close=")" separator=",">
+          #{item}
+      </foreach>
+      </if>
   </select>
 </mapper>

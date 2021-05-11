@@ -21,8 +21,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
   @Override
   protected void configure(HttpSecurity http) throws Exception {
     http.csrf().disable().authorizeRequests().antMatchers("/rsa/publicKey").permitAll().antMatchers("/department/**")
-        .permitAll().antMatchers("/userInfor/**").permitAll().requestMatchers(EndpointRequest.toAnyEndpoint())
-        .permitAll().anyRequest().authenticated();
+        .permitAll().antMatchers("/userInfor/**").permitAll().antMatchers("/post/**").permitAll()
+        .requestMatchers(EndpointRequest.toAnyEndpoint()).permitAll().anyRequest().authenticated();
   }
 
   @Override

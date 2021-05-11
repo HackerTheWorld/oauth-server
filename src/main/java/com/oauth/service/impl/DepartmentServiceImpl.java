@@ -43,27 +43,27 @@ public class DepartmentServiceImpl implements DepartmentService {
         long departmentId = jsonObject.optLong("departmentId", 0);
         Integer sort = jsonObject.optInt("sort", 0);
         String departmentName = jsonObject.optString("departmentName", "");
-        int status = jsonObject.optInt("status",0);
+        int status = jsonObject.optInt("status", 0);
 
         DepartmentEntity department = new DepartmentEntity();
         department.setDepartmentName(departmentName);
         department.setSort(sort);
         department.setStatus(status);
-        if(StringUtils.isNotBlank(departmentName)){
+        if (StringUtils.isNotBlank(departmentName)) {
             if (departmentId == 0) {
                 departmentEntityMapper.insertSelective(department);
             } else {
                 department.setDepartmentId(departmentId);
                 departmentEntityMapper.updateByPrimaryKeySelective(department);
             }
-            
-            saveLeader(jsonObject.optJSONArray("leader"),department.getDepartmentId());
-            saveParent(jsonObject.optJSONArray("parent"),department.getDepartmentId());
+
+            saveLeader(jsonObject.optJSONArray("leader"), department.getDepartmentId());
+            saveParent(jsonObject.optJSONArray("parent"), department.getDepartmentId());
         }
 
     }
 
-    private void saveLeader(JSONArray leaderArray,long departmentId){
+    private void saveLeader(JSONArray leaderArray, long departmentId) {
         if (leaderArray != null && !leaderArray.isEmpty()) {
             for (int i = 0; i < leaderArray.length(); i++) {
                 JSONObject leaderObject = leaderArray.getJSONObject(i);
@@ -83,17 +83,17 @@ public class DepartmentServiceImpl implements DepartmentService {
         }
     }
 
-    private void saveParent(JSONArray parentArray,long departmentId){
+    private void saveParent(JSONArray parentArray, long departmentId) {
         if (parentArray != null && !parentArray.isEmpty()) {
             for (int i = 0; i < parentArray.length(); i++) {
                 JSONObject parentObject = parentArray.getJSONObject(i);
                 long parentId = parentObject.optLong("parentId");
-                String parentPath = parentObject.optString("parentPath","");
-                long departmentRelationshipId = parentObject.optLong("departmentRelationshipId",0);
+                String parentPath = parentObject.optString("parentPath", "");
+                long departmentRelationshipId = parentObject.optLong("departmentRelationshipId", 0);
                 DepartmentRelationshipEntity departmentRelationshipEntity = new DepartmentRelationshipEntity();
                 departmentRelationshipEntity.setDepartmentId(departmentId);
                 departmentRelationshipEntity.setDepartmentParentId(parentId);
-                departmentRelationshipEntity.setDepartmentPath(parentPath+parentId+"|");
+                departmentRelationshipEntity.setDepartmentPath(parentPath + parentId + "|");
                 if (departmentRelationshipId == 0) {
                     departmentRelationshipEntityMapper.insertSelective(departmentRelationshipEntity);
                 } else {
@@ -106,77 +106,81 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     @Override
     public List<DepartmentVo> selectDepartment(Integer status, String departmentName, Long departmentId, Long parentId,
-            String parentName, Long userId, String username,Integer needChild) {
+            String parentName, Long userId, String username, Integer needChild) {
 
-        HashMap<String,Object> param = new HashMap<>();
+        HashMap<String, Object> param = new HashMap<>();
         List<Long> departmentList = new ArrayList<Long>();
-        boolean needSearch = false; 
-        if(userId != null || StringUtils.isNotBlank(username)){
+        boolean needSearch = false;
+        if (userId != null || StringUtils.isNotBlank(username)) {
             needSearch = true;
-            departmentList.addAll(userInforEntityMapper.selectDepartmentByUsername(username,userId));
+            departmentList.addAll(userInforEntityMapper.selectDepartmentByUsername(username, userId));
         }
-        if(parentId != null || StringUtils.isNotBlank(parentName)){
-            needSearch = true;
-            List<Long> parentList = departmentEntityMapper.selectParentByName(parentName, parentId).stream().map(mapper -> mapper.getDepartmentId()).collect(Collectors.toList());
-            if(CollectionUtils.isEmpty(departmentList)){
-                departmentList.addAll(parentList);
-            }else{
+        if (parentId != null || StringUtils.isNotBlank(parentName)) {
+            List<Long> parentList = departmentEntityMapper.selectParentByName(parentName, parentId).stream()
+                    .map(mapper -> mapper.getDepartmentId()).collect(Collectors.toList());
+            if (needSearch) {
                 departmentList.retainAll(parentList);
+            } else {
+                departmentList.addAll(parentList);
             }
-        }
-        if(departmentId != null){
             needSearch = true;
+        }
+        if (departmentId != null) {
             List<Long> depList = new ArrayList<Long>();
             depList.add(departmentId);
-            if(CollectionUtils.isEmpty(departmentList)){
-                departmentList.addAll(depList);
-            }else{
+            if (needSearch) {
                 departmentList.retainAll(depList);
+            } else {
+                departmentList.addAll(depList);
             }
         }
-        if(needSearch && CollectionUtils.isEmpty(departmentList)){
-            return null;
+        if (needSearch && CollectionUtils.isEmpty(departmentList)) {
+            return new ArrayList<>();
         }
 
         param.put("status", status);
         param.put("departmentName", departmentName);
-        
-        List<DepartmentVo> departmentVos = departmentEntityMapper.selectDepartment(param,departmentList);
+
+        List<DepartmentVo> departmentVos = departmentEntityMapper.selectDepartment(param, departmentList);
         selectDepartment(departmentVos);
-        if(needChild == 1){
+        if (needChild == 1) {
             return departmentVos;
-        }else {
+        } else {
             ChildCountVo countVo = new ChildCountVo();
             countVo.setNeedChild(needChild);
-            allChild(departmentVos,countVo);
+            allChild(departmentVos, countVo);
         }
         return departmentVos;
     }
 
-    private void selectDepartment(List<DepartmentVo> departmentVos){
+    private void selectDepartment(List<DepartmentVo> departmentVos) {
 
-        for(DepartmentVo departmentVo:departmentVos){
-            List<DepartmentRelationshipEntity> parents = departmentVo.getParents().stream().filter(predicate -> predicate.getDepartmentRelationshipId() != null).collect(Collectors.toList());
-            List<UserInforEntity> users = departmentVo.getUsers().stream().filter(predicate -> predicate.getUserId() != null).collect(Collectors.toList());
+        for (DepartmentVo departmentVo : departmentVos) {
+            List<DepartmentRelationshipEntity> parents = departmentVo.getParents().stream()
+                    .filter(predicate -> predicate.getDepartmentRelationshipId() != null).collect(Collectors.toList());
+            List<UserInforEntity> users = departmentVo.getUsers().stream()
+                    .filter(predicate -> predicate.getUserId() != null).collect(Collectors.toList());
             departmentVo.setParents(parents);
             departmentVo.setUsers(users);
         }
     }
 
-    private void allChild(List<DepartmentVo> departmentVos,ChildCountVo countVo){
-        for(DepartmentVo departmentVo : departmentVos){
-            List<Long> parentList = departmentEntityMapper.selectParentByName(null, departmentVo.getDepartmentId()).stream().map(mapper -> mapper.getDepartmentId()).collect(Collectors.toList());
+    private void allChild(List<DepartmentVo> departmentVos, ChildCountVo countVo) {
+        for (DepartmentVo departmentVo : departmentVos) {
+            List<Long> parentList = departmentEntityMapper.selectChildByName(departmentVo.getDepartmentId())
+                    .stream().map(mapper -> mapper.getDepartmentId()).collect(Collectors.toList());
             countVo.setNeedChild(countVo.getNeedChild() - 1);
-            if(countVo.getNeedChild() == 0 || CollectionUtils.isEmpty(parentList)){
+            if (countVo.getNeedChild() == 0 || CollectionUtils.isEmpty(parentList)) {
                 return;
             }
-            List<DepartmentVo> parentDepartmentVos = departmentEntityMapper.selectDepartment(new HashMap<String,Object>(),parentList);
-            if(!CollectionUtils.isEmpty(parentDepartmentVos)){
+            List<DepartmentVo> parentDepartmentVos = departmentEntityMapper
+                    .selectDepartment(new HashMap<String, Object>(), parentList);
+            if (!CollectionUtils.isEmpty(parentDepartmentVos)) {
                 selectDepartment(parentDepartmentVos);
                 departmentVo.setChildren(parentDepartmentVos);
-                allChild(parentDepartmentVos,countVo);
+                allChild(parentDepartmentVos, countVo);
             }
-            
+
         }
     }
 

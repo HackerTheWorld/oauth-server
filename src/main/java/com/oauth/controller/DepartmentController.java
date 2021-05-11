@@ -36,8 +36,8 @@ public class DepartmentController {
             + "\"parentId\": \"上级部门Id\",\n" + "\"parentPath\": \"上级部门路径\"\n" + "}\n" + "]\n"
             + "}", required = true, type = "JSONObject") @RequestBody String jsonObjectStr) {
         ResponseMessage responseMessage = new ResponseMessage();
-        JSONObject jsonObject = new JSONObject(jsonObjectStr);
         try {
+            JSONObject jsonObject = new JSONObject(jsonObjectStr);
             departmentService.saveAndUpdateDepartment(jsonObject);
             responseMessage.setMess("success");
             responseMessage.setSuccess(true);
@@ -61,8 +61,15 @@ public class DepartmentController {
             @ApiParam(value = "负责人性名", required = false, name = "username") @RequestParam(name = "username", required = false) String username,
             @ApiParam(value = "查询子项目深度,-1为全部树状结构", required = false, name = "needChild") @RequestParam(name = "needChild", required = false, defaultValue = "1") Integer needChild) {
         ResponseMessage responseMessage = new ResponseMessage();
-        responseMessage.setData(departmentService.selectDepartment(status, departmentName, departmentId, parentId,
+        try{
+            responseMessage.setSuccess(true);
+            responseMessage.setMess("success");
+            responseMessage.setData(departmentService.selectDepartment(status, departmentName, departmentId, parentId,
                 parentName, userId, username, needChild));
+        }catch(Exception e){
+            responseMessage.setSuccess(false);
+            responseMessage.setMess(e.getMessage());
+        }
         return responseMessage;
     }
 }

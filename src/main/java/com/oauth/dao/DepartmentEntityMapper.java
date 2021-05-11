@@ -19,7 +19,9 @@ public interface DepartmentEntityMapper {
 
     int updateByPrimaryKey(DepartmentEntity record);
 
-    List<DepartmentEntity> selectParentByName(String departmentName,Long parentId);
+    List<DepartmentEntity> selectParentByName(String parentDepartmentName,Long parentId);
+
+    List<DepartmentEntity> selectChildByName(Long parentId);
 
     List<DepartmentVo> selectDepartment(HashMap<String,Object> param,List<Long> departmentList);
 }

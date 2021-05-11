@@ -127,7 +127,7 @@
     </if>
   </select>
 
-  <select id="selectParentByName" resultMap="BaseResultMap">
+  <select id="selectChildByName" resultMap="BaseResultMap">
     select 
       distinct
       t1.department_id, t1.department_name, t1.sort, t1.created_time, t1.status
@@ -140,9 +140,23 @@
     <if test="parentId == 0">
       and t3.department_parent_id is null
     </if>
-    <if test="departmentName != null and departmentName != ''">
-      and department_name like concat('%',#{departmentName},'%')
-    </if>
   </select>
 
+  <select id="selectParentByName" resultMap="BaseResultMap">
+    select 
+      distinct
+      t1.department_id, t1.department_name, t1.sort, t1.created_time, t1.status
+    from department t1
+    left join department_relationship t3 on t3.department_parent_id = t1.department_id
+    where 1=1
+    <if test="parentId != null and parentId != 0">
+      and t3.department_parent_id = #{parentId}
+    </if>
+    <if test="parentId == 0">
+      and t3.department_parent_id is null
+    </if>
+    <if test="parentDepartmentName != null and parentDepartmentName != ''">
+      and department_name like concat('%',#{parentDepartmentName},'%')
+    </if>
+  </select>
 </mapper>
