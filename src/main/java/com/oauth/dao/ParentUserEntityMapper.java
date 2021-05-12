@@ -1,8 +1,9 @@
 package com.oauth.dao;
 
 import com.oauth.entity.ParentUserEntity;
-
-public interface ParentUserEntityMapper {
+import com.oauth.tar.RelationshipTar;
+@RelationshipTar(relationshipTarName = "ParentUser")
+public interface ParentUserEntityMapper extends RelationshipMapper<ParentUserEntity>{
     int deleteByPrimaryKey(Long parentUserId);
 
     int insert(ParentUserEntity record);

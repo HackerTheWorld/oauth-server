@@ -1,8 +1,9 @@
 package com.oauth.dao;
 
 import com.oauth.entity.DepartmentUserEntity;
-
-public interface DepartmentUserEntityMapper {
+import com.oauth.tar.RelationshipTar;
+@RelationshipTar(relationshipTarName = "DepartmentUser")
+public interface DepartmentUserEntityMapper extends RelationshipMapper<DepartmentUserEntity>{
     int deleteByPrimaryKey(Long departmentUserId);
 
     int insert(DepartmentUserEntity record);

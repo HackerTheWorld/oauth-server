@@ -3,24 +3,27 @@ package com.oauth.service.impl;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
+import com.oauth.comon.RelationshipUtil;
 import com.oauth.dao.DepartmentEntityMapper;
-import com.oauth.dao.DepartmentLeaderEntityMapper;
-import com.oauth.dao.DepartmentRelationshipEntityMapper;
+import com.oauth.dao.RelationshipMapper;
 import com.oauth.dao.UserInforEntityMapper;
 import com.oauth.entity.DepartmentEntity;
 import com.oauth.entity.DepartmentLeaderEntity;
 import com.oauth.entity.DepartmentRelationshipEntity;
 import com.oauth.entity.UserInforEntity;
 import com.oauth.service.DepartmentService;
+import com.oauth.tar.RelationshipTar;
 import com.oauth.vo.ChildCountVo;
 import com.oauth.vo.DepartmentVo;
 
 import org.apache.commons.lang3.StringUtils;
-import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -30,10 +33,17 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     @Autowired
     private DepartmentEntityMapper departmentEntityMapper;
+
+    private final Map<String, RelationshipMapper> relaMap;
+
     @Autowired
-    private DepartmentLeaderEntityMapper departmentLeaderEntityMapper;
-    @Autowired
-    private DepartmentRelationshipEntityMapper departmentRelationshipEntityMapper;
+    public DepartmentServiceImpl(List<RelationshipMapper> sfcInterListAuto) {
+        relaMap = sfcInterListAuto.stream()
+                .collect(Collectors.toMap(sfcInter -> Objects
+                        .requireNonNull(AnnotationUtils.findAnnotation(sfcInter.getClass(), RelationshipTar.class))
+                        .relationshipTarName(), v -> v, (v1, v2) -> v1));
+    }
+
     @Autowired
     private UserInforEntityMapper userInforEntityMapper;
 
@@ -57,51 +67,12 @@ public class DepartmentServiceImpl implements DepartmentService {
                 departmentEntityMapper.updateByPrimaryKeySelective(department);
             }
 
-            saveLeader(jsonObject.optJSONArray("leader"), department.getDepartmentId());
-            saveParent(jsonObject.optJSONArray("parent"), department.getDepartmentId());
+            RelationshipUtil.relationship(jsonObject.optJSONArray("leader"), "departmentId",
+                    department.getDepartmentId(), DepartmentLeaderEntity.class, relaMap.get("DepartmentLeader"));
+            RelationshipUtil.relationship(jsonObject.optJSONArray("parent"), "departmentId",
+                    department.getDepartmentId(), DepartmentLeaderEntity.class, relaMap.get("DepartmentRelationship"));
         }
 
-    }
-
-    private void saveLeader(JSONArray leaderArray, long departmentId) {
-        if (leaderArray != null && !leaderArray.isEmpty()) {
-            for (int i = 0; i < leaderArray.length(); i++) {
-                JSONObject leaderObject = leaderArray.getJSONObject(i);
-                long userId = leaderObject.getLong("userId");
-                long departmentLeaderId = leaderObject.optLong("departmentLeaderId", 0);
-                DepartmentLeaderEntity departmentLeaderEntity = new DepartmentLeaderEntity();
-                departmentLeaderEntity.setDepartmentId(departmentId);
-                departmentLeaderEntity.setUserId(userId);
-                if (departmentLeaderId == 0) {
-                    departmentLeaderEntityMapper.insertSelective(departmentLeaderEntity);
-                } else {
-                    departmentLeaderEntity.setDepartmentLeaderId(departmentLeaderId);
-                    departmentLeaderEntityMapper.updateByPrimaryKeySelective(departmentLeaderEntity);
-                }
-            }
-
-        }
-    }
-
-    private void saveParent(JSONArray parentArray, long departmentId) {
-        if (parentArray != null && !parentArray.isEmpty()) {
-            for (int i = 0; i < parentArray.length(); i++) {
-                JSONObject parentObject = parentArray.getJSONObject(i);
-                long parentId = parentObject.optLong("parentId");
-                String parentPath = parentObject.optString("parentPath", "");
-                long departmentRelationshipId = parentObject.optLong("departmentRelationshipId", 0);
-                DepartmentRelationshipEntity departmentRelationshipEntity = new DepartmentRelationshipEntity();
-                departmentRelationshipEntity.setDepartmentId(departmentId);
-                departmentRelationshipEntity.setDepartmentParentId(parentId);
-                departmentRelationshipEntity.setDepartmentPath(parentPath + parentId + "|");
-                if (departmentRelationshipId == 0) {
-                    departmentRelationshipEntityMapper.insertSelective(departmentRelationshipEntity);
-                } else {
-                    departmentRelationshipEntity.setDepartmentRelationshipId(departmentRelationshipId);
-                    departmentRelationshipEntityMapper.updateByPrimaryKeySelective(departmentRelationshipEntity);
-                }
-            }
-        }
     }
 
     @Override
@@ -167,8 +138,8 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     private void allChild(List<DepartmentVo> departmentVos, ChildCountVo countVo) {
         for (DepartmentVo departmentVo : departmentVos) {
-            List<Long> parentList = departmentEntityMapper.selectChildByName(departmentVo.getDepartmentId())
-                    .stream().map(mapper -> mapper.getDepartmentId()).collect(Collectors.toList());
+            List<Long> parentList = departmentEntityMapper.selectChildByName(departmentVo.getDepartmentId()).stream()
+                    .map(mapper -> mapper.getDepartmentId()).collect(Collectors.toList());
             countVo.setNeedChild(countVo.getNeedChild() - 1);
             if (countVo.getNeedChild() == 0 || CollectionUtils.isEmpty(parentList)) {
                 return;

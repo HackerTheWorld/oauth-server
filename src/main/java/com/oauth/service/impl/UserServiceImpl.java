@@ -3,30 +3,32 @@ package com.oauth.service.impl;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import javax.security.auth.login.AccountExpiredException;
 
+import com.oauth.comon.RelationshipUtil;
 import com.oauth.contons.MessageConstant;
 import com.oauth.converter.UserConverter;
-import com.oauth.dao.DepartmentUserEntityMapper;
-import com.oauth.dao.ParentUserEntityMapper;
-import com.oauth.dao.PostUserEntityMapper;
+import com.oauth.dao.RelationshipMapper;
 import com.oauth.dao.UserInforEntityMapper;
 import com.oauth.entity.DepartmentUserEntity;
 import com.oauth.entity.ParentUserEntity;
 import com.oauth.entity.PostUserEntity;
 import com.oauth.entity.UserInforEntity;
 import com.oauth.service.UserService;
+import com.oauth.tar.RelationshipTar;
 import com.oauth.vo.User;
 import com.oauth.vo.UserInforVo;
 import com.oauth.vo.UserPrincipal;
 
 import org.apache.commons.lang3.StringUtils;
-import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cglib.beans.BeanCopier;
+import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.security.authentication.CredentialsExpiredException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.LockedException;
@@ -43,13 +45,17 @@ public class UserServiceImpl implements UserService {
   @Autowired
   private UserInforEntityMapper userEntityMapper;
   @Autowired
-  private DepartmentUserEntityMapper departmentUserEntityMapper;
-  @Autowired
-  private PostUserEntityMapper postUserEntityMapper;
-  @Autowired
-  private ParentUserEntityMapper parentUserEntityMapper;
-  @Autowired
   private PasswordEncoder passwordEncoder;
+
+  private final Map<String, RelationshipMapper> relaMap;
+
+  @Autowired
+  public UserServiceImpl(List<RelationshipMapper> sfcInterListAuto) {
+    relaMap = sfcInterListAuto.stream()
+        .collect(Collectors.toMap(sfcInter -> Objects
+            .requireNonNull(AnnotationUtils.findAnnotation(sfcInter.getClass(), RelationshipTar.class))
+            .relationshipTarName(), v -> v, (v1, v2) -> v1));
+  }
 
   @Override
   public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -115,92 +121,21 @@ public class UserServiceImpl implements UserService {
       userInforEntity.setUserId(userId);
       userEntityMapper.updateByPrimaryKeySelective(userInforEntity);
     }
+    RelationshipUtil.relationship(jsonObject.optJSONArray("department"), "userId", userInforEntity.getUserId(),
+        DepartmentUserEntity.class, relaMap.get("DepartmentUser"));
+    RelationshipUtil.relationship(jsonObject.optJSONArray("post"), "userId", userInforEntity.getUserId(),
+        PostUserEntity.class, relaMap.get("PostUser"));
+    RelationshipUtil.relationship(jsonObject.optJSONArray("parent"), "userId", userInforEntity.getUserId(),
+        ParentUserEntity.class, relaMap.get("ParentUser"));
+    RelationshipUtil.relationship(jsonObject.optJSONArray("role"), "userId", userInforEntity.getUserId(),
+        PostUserEntity.class, relaMap.get("PostUser"));
 
-    department(jsonObject.optJSONArray("department"), userInforEntity.getUserId());
-    post(jsonObject.optJSONArray("post"), userInforEntity.getUserId());
-    parentUser(jsonObject.optJSONArray("parent"),userInforEntity.getUserId());
-
-  }
-
-  private void department(JSONArray departmentArray, Long userId){
-    if (departmentArray != null && !departmentArray.isEmpty()) {
-      for (int i = 0; i < departmentArray.length(); i++) {
-        JSONObject jsonObject = departmentArray.optJSONObject(i);
-        Long departmentUserId = jsonObject.optLong("departmentUserId", 0);
-        Long departmentId = jsonObject.optLong("departmentId", 0);
-        DepartmentUserEntity departmentUserEntity = new DepartmentUserEntity();
-        departmentUserEntity.setUserId(userId);
-        departmentUserEntity.setDepartmentId(departmentId);
-        if (departmentUserId == 0) {
-          departmentUserEntityMapper.insertSelective(departmentUserEntity);
-        } else {
-          departmentUserEntity.setDepartmentUserId(departmentUserId);
-          departmentUserEntityMapper.updateByPrimaryKeySelective(departmentUserEntity);
-        }
-      }
-    }
-  }
-
-  // private void role(JSONArray roleArray, Long userId){
-  //   if (roleArray != null && !roleArray.isEmpty()) {
-  //     for (int i = 0; i < roleArray.length(); i++) {
-  //       JSONObject jsonObject = roleArray.optJSONObject(i);
-  //       Long userRoleId = jsonObject.optLong("userRoleId", 0);
-  //       Long roleId = jsonObject.optLong("roleId", 0);
-  //        departmentUserEntity = new DepartmentUserEntity();
-  //       departmentUserEntity.setUserId(userId);
-  //       departmentUserEntity.setDepartmentId(departmentId);
-  //       if (departmentUserId == 0) {
-  //         departmentUserEntityMapper.insertSelective(departmentUserEntity);
-  //       } else {
-  //         departmentUserEntity.setDepartmentUserId(departmentUserId);
-  //         departmentUserEntityMapper.updateByPrimaryKeySelective(departmentUserEntity);
-  //       }
-  //     }
-  //   }
-  // }
-
-  private void parentUser(JSONArray parentUserArray, Long userId) {
-    if (parentUserArray != null && !parentUserArray.isEmpty()) {
-      for (int i = 0; i < parentUserArray.length(); i++) {
-        JSONObject jsonObject = parentUserArray.optJSONObject(i);
-        Long parentUserId = jsonObject.optLong("parentUserId", 0);
-        Long parentId = jsonObject.optLong("userParentId", 0);
-        ParentUserEntity parentUserEntity = new ParentUserEntity();
-        parentUserEntity.setUserId(userId);
-        parentUserEntity.setUserParentId(parentId);
-        if (parentUserId == 0) {
-          parentUserEntityMapper.insertSelective(parentUserEntity);
-        } else {
-          parentUserEntity.setParentUserId(parentUserId);
-          parentUserEntityMapper.updateByPrimaryKeySelective(parentUserEntity);
-        }
-      }
-    }
-  }
-
-  private void post(JSONArray postArray, Long userId) {
-    if (postArray != null && !postArray.isEmpty()) {
-      for (int i = 0; i < postArray.length(); i++) {
-        JSONObject jsonObject = postArray.optJSONObject(i);
-        Long postUserId = jsonObject.optLong("postUserId", 0);
-        Long postId = jsonObject.optLong("postId", 0);
-        PostUserEntity postUserEntity = new PostUserEntity();
-        postUserEntity.setPostId(postId);
-        postUserEntity.setUserId(userId);
-        if (postUserId == 0) {
-          postUserEntityMapper.insertSelective(postUserEntity);
-        } else {
-          postUserEntity.setPostUserId(postUserId);
-          postUserEntityMapper.updateByPrimaryKeySelective(postUserEntity);
-        }
-      }
-    }
   }
 
   @Override
-  public List<UserInforVo> selectUserInfor(Integer status, String username, Long userId, String realname,Long parentUserId, String parentRealname, String email,
-      String phone, Long departmentId, String department, Long postId, String post, String postCode) {
+  public List<UserInforVo> selectUserInfor(Integer status, String username, Long userId, String realname,
+      Long parentUserId, String parentRealname, String email, String phone, Long departmentId, String department,
+      Long postId, String post, String postCode) {
     boolean needUserId = false;
     List<Long> userIdList = new ArrayList<Long>();
     if (postId != null || StringUtils.isNotBlank(post) || StringUtils.isNotBlank(postCode)) {
@@ -216,7 +151,7 @@ public class UserServiceImpl implements UserService {
       }
       needUserId = true;
     }
-    if(parentUserId != null && StringUtils.isNotBlank(parentRealname)){
+    if (parentUserId != null && StringUtils.isNotBlank(parentRealname)) {
       List<Long> parentList = userEntityMapper.selectParentUserByName(parentUserId, parentRealname);
       if (needUserId) {
         userIdList.retainAll(parentList);
@@ -235,10 +170,10 @@ public class UserServiceImpl implements UserService {
       }
       needUserId = true;
     }
-    if(needUserId && CollectionUtils.isEmpty(userIdList)){
+    if (needUserId && CollectionUtils.isEmpty(userIdList)) {
       return new ArrayList<>();
     }
-    HashMap<String,Object> param = new HashMap<String,Object>();
+    HashMap<String, Object> param = new HashMap<String, Object>();
     param.put("status", status);
     param.put("username", username);
     param.put("userId", userId);
@@ -246,10 +181,12 @@ public class UserServiceImpl implements UserService {
     param.put("phone", phone);
     param.put("email", email);
 
-    List<UserInforVo> userInforVos = userEntityMapper.selectUserInforVos(param,userIdList);
-    for(UserInforVo userInforVo : userInforVos){
-      userInforVo.setDepartmentUser(userInforVo.getDepartmentUser().stream().filter(predicate -> predicate.getDepartmentId() != null).collect(Collectors.toList()));
-      userInforVo.setParent(userInforVo.getParent().stream().filter(predicate -> predicate.getUserId() != null).collect(Collectors.toList()));
+    List<UserInforVo> userInforVos = userEntityMapper.selectUserInforVos(param, userIdList);
+    for (UserInforVo userInforVo : userInforVos) {
+      userInforVo.setDepartmentUser(userInforVo.getDepartmentUser().stream()
+          .filter(predicate -> predicate.getDepartmentId() != null).collect(Collectors.toList()));
+      userInforVo.setParent(userInforVo.getParent().stream().filter(predicate -> predicate.getUserId() != null)
+          .collect(Collectors.toList()));
     }
     return userInforVos;
   }

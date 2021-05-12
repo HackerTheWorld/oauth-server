@@ -1,6 +1,9 @@
 package com.oauth.entity;
 
+import nonapi.io.github.classgraph.json.Id;
+
 public class PostUserEntity {
+    @Id
     private Long postUserId;
 
     private Long userId;

@@ -1,8 +1,9 @@
 package com.oauth.dao;
 
 import com.oauth.entity.PostUserEntity;
-
-public interface PostUserEntityMapper {
+import com.oauth.tar.RelationshipTar;
+@RelationshipTar(relationshipTarName = "PostUser")
+public interface PostUserEntityMapper extends RelationshipMapper<PostUserEntity> {
     int deleteByPrimaryKey(Long postUserId);
 
     int insert(PostUserEntity record);
