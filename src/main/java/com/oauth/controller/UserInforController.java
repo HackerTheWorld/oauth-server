@@ -34,7 +34,8 @@ public class UserInforController {
             + "\"email\": \"邮箱\",\n" + "\"department\": [\n" + "{\n" + "\"departmentId\": \"部门id\",\n"
             + "\"departmentUserId\": \"用户所属部门关系id\"\n" + "}\n" + "],\n" + "\"post\": [\n" + "{\n"
             + "\"postId\": \"岗位id\",\n" + "\"postUserId\": \"岗位与用户关系id\"\n" + "}\n" + "]\n" + "\"parent\": [\n" + "{\n"
-            + "\"parentId\": \"上级用户id\",\n" + "\"parentUserId\": \"用户与用户关系id\"\n" + "}\n" + "]\n"
+            + "\"userParentId\": \"上级用户id\",\n" + "\"parentUserId\": \"用户与用户关系id\"\n" + "}\n" + "]\n" + "\"role\": [\n"
+            + "{\n" + "\"roleId\": \"角色id\",\n" + "\"userRoleId\": \"用户与角色关系id\"\n" + "}\n" + "]\n"
             + "}", required = true, type = "JSONObject") @RequestBody String jsonObjectStr) {
         ResponseMessage responseMessage = new ResponseMessage();
         try {
@@ -70,7 +71,8 @@ public class UserInforController {
         try {
             responseMessage.setMess("success");
             responseMessage.setSuccess(true);
-            responseMessage.setData(userService.selectUserInfor(status, username, userId, realname, parentId, parentRealname, email, phone, departmentId, department, postId, post, postCode));
+            responseMessage.setData(userService.selectUserInfor(status, username, userId, realname, parentId,
+                    parentRealname, email, phone, departmentId, department, postId, post, postCode));
         } catch (Exception e) {
             responseMessage.setMess(e.getMessage());
             responseMessage.setSuccess(false);

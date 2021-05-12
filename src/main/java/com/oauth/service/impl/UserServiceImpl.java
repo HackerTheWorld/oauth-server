@@ -122,31 +122,50 @@ public class UserServiceImpl implements UserService {
 
   }
 
-  private void department(JSONArray departmentArray, Long userId) {
+  private void department(JSONArray departmentArray, Long userId){
     if (departmentArray != null && !departmentArray.isEmpty()) {
       for (int i = 0; i < departmentArray.length(); i++) {
         JSONObject jsonObject = departmentArray.optJSONObject(i);
         Long departmentUserId = jsonObject.optLong("departmentUserId", 0);
         Long departmentId = jsonObject.optLong("departmentId", 0);
-        DepartmentUserEntity departmentUser = new DepartmentUserEntity();
-        departmentUser.setUserId(userId);
-        departmentUser.setDepartmentId(departmentId);
+        DepartmentUserEntity departmentUserEntity = new DepartmentUserEntity();
+        departmentUserEntity.setUserId(userId);
+        departmentUserEntity.setDepartmentId(departmentId);
         if (departmentUserId == 0) {
-          departmentUserEntityMapper.insertSelective(departmentUser);
+          departmentUserEntityMapper.insertSelective(departmentUserEntity);
         } else {
-          departmentUser.setDepartmentUserId(departmentUserId);
-          departmentUserEntityMapper.updateByPrimaryKeySelective(departmentUser);
+          departmentUserEntity.setDepartmentUserId(departmentUserId);
+          departmentUserEntityMapper.updateByPrimaryKeySelective(departmentUserEntity);
         }
       }
     }
   }
+
+  // private void role(JSONArray roleArray, Long userId){
+  //   if (roleArray != null && !roleArray.isEmpty()) {
+  //     for (int i = 0; i < roleArray.length(); i++) {
+  //       JSONObject jsonObject = roleArray.optJSONObject(i);
+  //       Long userRoleId = jsonObject.optLong("userRoleId", 0);
+  //       Long roleId = jsonObject.optLong("roleId", 0);
+  //        departmentUserEntity = new DepartmentUserEntity();
+  //       departmentUserEntity.setUserId(userId);
+  //       departmentUserEntity.setDepartmentId(departmentId);
+  //       if (departmentUserId == 0) {
+  //         departmentUserEntityMapper.insertSelective(departmentUserEntity);
+  //       } else {
+  //         departmentUserEntity.setDepartmentUserId(departmentUserId);
+  //         departmentUserEntityMapper.updateByPrimaryKeySelective(departmentUserEntity);
+  //       }
+  //     }
+  //   }
+  // }
 
   private void parentUser(JSONArray parentUserArray, Long userId) {
     if (parentUserArray != null && !parentUserArray.isEmpty()) {
       for (int i = 0; i < parentUserArray.length(); i++) {
         JSONObject jsonObject = parentUserArray.optJSONObject(i);
         Long parentUserId = jsonObject.optLong("parentUserId", 0);
-        Long parentId = jsonObject.optLong("parentId", 0);
+        Long parentId = jsonObject.optLong("userParentId", 0);
         ParentUserEntity parentUserEntity = new ParentUserEntity();
         parentUserEntity.setUserId(userId);
         parentUserEntity.setUserParentId(parentId);
