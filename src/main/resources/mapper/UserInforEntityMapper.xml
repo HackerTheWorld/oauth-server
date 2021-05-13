@@ -266,7 +266,7 @@
     </if>
   </select>
 
-  
+
   <select id="selectChild" resultMap="UserInforVo">
     select 
       t1.user_id, t1.username, t1.realname,t1.phone,t1.email, t1.status,
@@ -291,14 +291,14 @@
   </select>
 
 
-    <select id="selectIdChildByName" resultMap="BaseResultMap">
+  <select id="selectIdChildByName" resultType="java.lang.Long">
     select 
       distinct
       t1.user_id
     from user_infor t1
     left join parent_user t3 on t3.user_id = t1.user_id
     where 1=1
-    <if test="parentId != null and parentId != 0">
+    <if test="parentId != null">
       and t3.parent_user_id = #{parentId}
     </if>
     <if test="parentId == 0">

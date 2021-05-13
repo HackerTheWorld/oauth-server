@@ -165,6 +165,64 @@
     </if>
   </select>
 
+  <resultMap id="MeumVo" extends="BaseResultMap" type="com.oauth.vo.MeumVo">
+    <!--一对多，方式一-->
+    <collection property="roles" ofType="com.oauth.entity.RoleEntity">
+      <id column="role_id" jdbcType="BIGINT" property="roleId" />
+      <result column="role_name" jdbcType="VARCHAR" property="roleName" />
+    </collection>
+  </resultMap>
 
-  MeumVo
+  <select id="selectMeumVos" parameterType="java.lang.Long" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    ,t3.*
+    from meum t1
+    left join role_meum t2 on t2.meum_id = t1.meum_id
+    left join role t3 on t2.role_id = t3.role_id
+    where 1=1
+    <if test="param.meumName != null and param.meumName = ''">
+        and meum_name = #{meumName}
+    </if>
+    <if test="param.parentId != null">
+      and parent_id = #{parentId}
+    </if>
+    <if test="meumIds != null and meumIds.size > 0">
+      <foreach collection="meumIds" item="item" index="index" open="and t1.meum_id in (" close=")" separator=",">
+          #{item}
+      </foreach>
+    </if>
+  </select>
+
+
+  <select id="selectIdChildByName" parameterType="java.lang.Long" resultType="java.lang.Long">
+    select 
+      t1.meum_id
+    from meum t1
+    where 1=1
+    <if test="parentId != null">
+     and t1.parent_id = #{parentId}
+    </if>
+  </select>
+
+  <select id="selectChild" parameterType="java.lang.Long" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    ,t3.*
+    from meum t1
+    left join role_meum t2 on t2.meum_id = t1.meum_id
+    left join role t3 on t2.role_id = t3.role_id
+    where 1=1
+    <if test="parentList != null and parentList.size > 0">
+      <foreach collection="parentList" item="item" index="index" open="and t1.meum_id in (" close=")" separator=",">
+          #{item}
+      </foreach>
+    </if>
+  </select>
+
+
 </mapper>

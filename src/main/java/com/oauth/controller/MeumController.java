@@ -53,10 +53,11 @@ public class MeumController {
             @ApiParam(value = "菜单Id", required = false, name = "meumId") @RequestParam(name = "meumId", required = false) Long meumId,
             @ApiParam(value = "菜单名称", required = false, name = "meumName") @RequestParam(name = "meumName", required = false) String meumName,
             @ApiParam(value = "父菜单Id", required = false, name = "parentId") @RequestParam(name = "parentId", required = false) Long parentId,
-            @ApiParam(value = "父菜单名称", required = false, name = "parentMeumName") @RequestParam(name = "parentMeumName", required = false) String parentMeumName,
+            @ApiParam(value = "权限Id", required = false, name = "roleId") @RequestParam(name = "roleId", required = false) Long roleId,
             @ApiParam(value = "查询子项目深度,-1为全部树状结构", required = false, name = "needChild") @RequestParam(name = "needChild", required = false, defaultValue = "1") Integer needChild) {
         ResponseMessage responseMessage = new ResponseMessage();
         try {
+            responseMessage.setData(meumService.selectMeum(meumId, meumName, parentId,roleId, needChild));
             responseMessage.setMess("success");
             responseMessage.setSuccess(true);
         } catch (Exception e) {

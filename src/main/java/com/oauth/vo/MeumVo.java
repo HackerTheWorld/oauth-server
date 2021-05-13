@@ -9,8 +9,6 @@ public class MeumVo extends MeumEntity{
 
     private Set<RoleEntity> roles;
 
-    private Set<MeumEntity> parent;
-
     private Set<MeumVo> children;
 
     public Set<RoleEntity> getRoles() {
@@ -19,14 +17,6 @@ public class MeumVo extends MeumEntity{
 
     public void setRoles(Set<RoleEntity> roles) {
         this.roles = roles;
-    }
-
-    public Set<MeumEntity> getParent() {
-        return parent;
-    }
-
-    public void setParent(Set<MeumEntity> parent) {
-        this.parent = parent;
     }
 
     public Set<MeumVo> getChildren() {

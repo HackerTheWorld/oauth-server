@@ -24,8 +24,4 @@ public interface DepartmentEntityMapper extends TreeEntityMapper<DepartmentVo>{
     List<DepartmentEntity> selectParentByName(String parentDepartmentName,Long parentId);
 
     List<DepartmentVo> selectDepartment(HashMap<String,Object> param,List<Long> departmentList);
-    @Override
-    List<Long> selectIdChildByName(Long parentId);
-    @Override
-    List<DepartmentVo> selectChild(List<Long> departmentList);
 }

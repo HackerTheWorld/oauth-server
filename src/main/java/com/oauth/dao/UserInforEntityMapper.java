@@ -33,7 +33,4 @@ public interface UserInforEntityMapper extends TreeEntityMapper<UserInforVo>{
 
     List<UserInforVo> selectUserInforVos(HashMap<String,Object> param,List<Long> userIds);
 
-    List<Long> selectIdChildByName(Long parentId);
-
-    List<UserInforVo> selectChild(List<Long> parentList);
 }
