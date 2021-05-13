@@ -1,9 +1,9 @@
 package com.oauth.controller;
 
+import com.oauth.entity.MeumEntityWithBLOBs;
 import com.oauth.service.MeumService;
 import com.oauth.vo.ResponseMessage;
 
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,15 +28,10 @@ public class MeumController {
     @PostMapping("/saveAndUpdateMeum")
     @ApiOperation(value = "新增或修改数据", httpMethod = "POST")
     @ResponseBody
-    public ResponseMessage saveAndUpdateMeum(@ApiParam(value = "{\n" + "\"meumId\":\"菜单Id,判断新增修改\",\n"
-            + "\"meumName\":\"菜单名称\",\n" + "\"parentId\":\"上级菜单\",\n" + "\"meumType\":\"菜单类型\",\n"
-            + "\"isRefresh\":\"是否刷新\",\n" + "\"orderNumber\":\"排序\",\n" + "\"visible\":\"是否显示\",\n"
-            + "\"target\":\"开打方式,1.标签 2.新窗口\",\n" + "\"parentPath\":\"菜单路由\"\n"
-            + "}", required = true, type = "JSONObject") @RequestBody String jsonObjectStr) {
+    public ResponseMessage saveAndUpdateMeum(@RequestBody MeumEntityWithBLOBs meumEntity) {
         ResponseMessage responseMessage = new ResponseMessage();
         try {
-            JSONObject jsonObject = new JSONObject(jsonObjectStr);
-            meumService.saveAndUpdateMeum(jsonObject);
+            meumService.saveAndUpdateMeum(meumEntity);
             responseMessage.setMess("success");
             responseMessage.setSuccess(true);
         } catch (Exception e) {

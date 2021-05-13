@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.oauth.comon.TreeUtil;
 import com.oauth.dao.MeumEntityMapper;
-import com.oauth.dao.TreeEntityMapper;
+import com.oauth.tar.TreeEntityMapper;
 import com.oauth.entity.MeumEntityWithBLOBs;
 import com.oauth.service.MeumService;
 import com.oauth.tar.TreeTarget;
@@ -23,11 +23,10 @@ import com.oauth.vo.MeumVo;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.AnnotationUtils;
+import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import io.swagger.v3.oas.annotations.servers.Server;
-
-@Server
+@Service
 public class MeumServiceImpl implements MeumService {
 
     @Autowired
@@ -44,10 +43,8 @@ public class MeumServiceImpl implements MeumService {
     }
 
     @Override
-    public void saveAndUpdateMeum(JSONObject jsonObject) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        MeumEntityWithBLOBs meum = objectMapper.convertValue(jsonObject, MeumEntityWithBLOBs.class);
-        meumEntityMapper.insertSelective(meum);
+    public void saveAndUpdateMeum(MeumEntityWithBLOBs meumEntity) {
+        meumEntityMapper.insertSelective(meumEntity);
     }
 
     @Override

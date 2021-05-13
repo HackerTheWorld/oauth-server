@@ -6,6 +6,7 @@ import java.util.Set;
 
 import com.oauth.entity.MeumEntity;
 import com.oauth.entity.MeumEntityWithBLOBs;
+import com.oauth.tar.TreeEntityMapper;
 import com.oauth.tar.TreeTarget;
 import com.oauth.vo.MeumVo;
 

@@ -87,7 +87,7 @@
 
   <resultMap id="DepartmentVo" extends="BaseResultMap" type="com.oauth.vo.DepartmentVo">
     <!--一对多，方式一-->
-    <collection property="users" ofType="com.oauth.entity.UserInforEntity">
+    <collection property="users" ofType="com.oauth.entity.UserInforEntity" javaType="java.util.Set">
       <id column="user_id" jdbcType="BIGINT" property="userId" />
       <result column="username" jdbcType="VARCHAR" property="username" />
       <result column="password" jdbcType="VARCHAR" property="password" />
@@ -96,7 +96,7 @@
       <result column="realname" jdbcType="VARCHAR" property="realname" />
       <result column="email" jdbcType="VARCHAR" property="email" />
     </collection>
-    <collection property="parent" ofType="com.oauth.entity.DepartmentRelationshipEntity">
+    <collection property="parent" ofType="com.oauth.entity.DepartmentRelationshipEntity" javaType="java.util.Set">
       <id column="department_relationship_id" jdbcType="BIGINT" property="departmentRelationshipId" />
       <result column="department_id" jdbcType="BIGINT" property="departmentId" />
       <result column="department_parent_id" jdbcType="BIGINT" property="departmentParentId" />

@@ -2,13 +2,16 @@ package com.oauth.entity;
 
 import org.springframework.data.annotation.Id;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+@ApiModel("用户与角色关系")
 public class UserRoleEntity {
-    
+    @ApiModelProperty("用户与角色关系Id")
     @Id
     private Long userRoleId;
-
+    @ApiModelProperty("用户Id")
     private Long userId;
-
+    @ApiModelProperty("角色Id")
     private Long roleId;
 
     public Long getUserRoleId() {

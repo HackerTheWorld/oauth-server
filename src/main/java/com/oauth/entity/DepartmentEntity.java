@@ -2,15 +2,19 @@ package com.oauth.entity;
 
 import java.time.LocalDateTime;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+@ApiModel("部门")
 public class DepartmentEntity {
+    @ApiModelProperty("部门id")
     private Long departmentId;
-
+    @ApiModelProperty("部门名称")
     private String departmentName;
-
+    @ApiModelProperty("排序")
     private Integer sort;
-
+    @ApiModelProperty("创建时间")
     private LocalDateTime createdTime;
-
+    @ApiModelProperty("状态")
     private Integer status;
 
     public Long getDepartmentId() {

@@ -190,7 +190,7 @@
 
   <resultMap id="UserInforVo" extends="BaseResultMap" type="com.oauth.vo.UserInforVo">
     <!--一对多，方式一-->
-    <collection property="parent" ofType="com.oauth.entity.UserInforEntity">
+    <collection property="parent" ofType="com.oauth.entity.UserInforEntity" javaType="java.util.Set">
       <id column="parent_user_id" jdbcType="BIGINT" property="userId" />
       <result column="parent_username" jdbcType="VARCHAR" property="username" />
       <result column="parent_phone" jdbcType="VARCHAR" property="phone" />
@@ -198,14 +198,14 @@
       <result column="parent_email" jdbcType="VARCHAR" property="email" />
       <result column="parent_status" jdbcType="INTEGER" property="status" />
     </collection>
-    <collection property="departmentUser" ofType="com.oauth.entity.DepartmentEntity">
+    <collection property="departmentUser" ofType="com.oauth.entity.DepartmentEntity" javaType="java.util.Set">
       <id column="department_id" jdbcType="BIGINT" property="departmentId" />
       <result column="department_name" jdbcType="VARCHAR" property="departmentName" />
       <result column="department_sort" jdbcType="INTEGER" property="sort" />
       <result column="department_created_time" jdbcType="TIMESTAMP" property="createdTime" />
       <result column="department_status" jdbcType="INTEGER" property="status" />
     </collection>
-    <collection property="postUserEntity" ofType="com.oauth.entity.PostEntity">
+    <collection property="postUserEntity" ofType="com.oauth.entity.PostEntity" javaType="java.util.Set">
       <id column="post_id" jdbcType="BIGINT" property="postId" />
       <result column="post_code" jdbcType="VARCHAR" property="postCode" />
       <result column="post_name" jdbcType="VARCHAR" property="postName" />
@@ -213,11 +213,11 @@
       <result column="post_created_time" jdbcType="TIMESTAMP" property="createdTime" />
       <result column="post_status" jdbcType="INTEGER" property="status" />
     </collection>
-    <collection property="roleEntity" ofType="com.oauth.entity.RoleEntity">
+    <collection property="roleEntity" ofType="com.oauth.entity.RoleEntity" javaType="java.util.Set">
       <id column="role_id" jdbcType="BIGINT" property="roleId" />
       <result column="role_name" jdbcType="VARCHAR" property="roleName" />
     </collection>
-    <collection id="meumEntity" type="com.oauth.entity.MeumEntityWithBLOBs">
+    <collection property="meumEntity" ofType="com.oauth.entity.MeumEntityWithBLOBs" javaType="java.util.Set" >
       <id column="meum_id" jdbcType="BIGINT" property="meumId" />
       <result column="meum_name" jdbcType="VARCHAR" property="meumName" />
       <result column="parent_id" jdbcType="BIGINT" property="parentId" />

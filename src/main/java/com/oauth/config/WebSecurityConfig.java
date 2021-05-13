@@ -22,14 +22,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
   protected void configure(HttpSecurity http) throws Exception {
     http.csrf().disable().authorizeRequests().antMatchers("/rsa/publicKey").permitAll().antMatchers("/department/**")
         .permitAll().antMatchers("/userInfor/**").permitAll().antMatchers("/post/**").permitAll()
-        .antMatchers("/meum/**").permitAll().requestMatchers(EndpointRequest.toAnyEndpoint()).permitAll().anyRequest()
-        .authenticated();
+        .antMatchers("/meum/**").permitAll().antMatchers("/swagger-ui/**").permitAll()
+        .antMatchers("/swagger-resources/**").permitAll().antMatchers("/v3/**").permitAll()
+        .requestMatchers(EndpointRequest.toAnyEndpoint()).permitAll().anyRequest().authenticated();
   }
 
   @Override
   public void configure(WebSecurity web) throws Exception {
     // 对js、css、images不做拦截
-    web.ignoring().antMatchers("/js'/**", "/css/**", "/images/**");
+    web.ignoring().antMatchers("/js'/**", "/css/**", "/images/**", "**.html");
   }
 
   @Bean

@@ -1,13 +1,16 @@
 package com.oauth.entity;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import nonapi.io.github.classgraph.json.Id;
-
+@ApiModel("用户与用户关系")
 public class ParentUserEntity {
+    @ApiModelProperty("用户与用户关系Id")
     @Id
     private Long parentUserId;
-
+    @ApiModelProperty("用户Id")
     private Long userId;
-
+    @ApiModelProperty("上级用户Id")
     private Long userParentId;
 
     public Long getParentUserId() {

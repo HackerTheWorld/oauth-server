@@ -1,4 +1,4 @@
-package com.oauth.dao;
+package com.oauth.tar;
 
 public interface RelationshipMapper<T> {
     

@@ -2,7 +2,7 @@ package com.oauth.dao;
 
 import com.oauth.entity.RoleMeumEntity;
 import com.oauth.tar.RelationshipTarget;
-
+import com.oauth.tar.RelationshipMapper;
 @RelationshipTarget(relationshipTargetName = "RoleMeum")
 public interface RoleMeumEntityMapper  extends RelationshipMapper<RoleMeumEntity>{
     int deleteByPrimaryKey(Long roleMeumId);

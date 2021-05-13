@@ -1,8 +1,13 @@
 package com.oauth.entity;
 
-public class RoleEntity {
-    private Long roleId;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
+@ApiModel("角色新增修改信息")
+public class RoleEntity {
+    @ApiModelProperty("角色Id")
+    private Long roleId;
+    @ApiModelProperty("角色名称")
     private String roleName;
 
     public Long getRoleId() {

@@ -1,9 +1,8 @@
 package com.oauth.controller;
 
+import com.oauth.receiving.RoleRece;
 import com.oauth.service.RoleService;
 import com.oauth.vo.ResponseMessage;
-
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,14 +27,10 @@ public class RoleController {
     @PostMapping("/saveAndUpdateRole")
     @ApiOperation(value = "新增或修改数据", httpMethod = "POST")
     @ResponseBody
-    public ResponseMessage saveAndUpdateRole(
-            @ApiParam(value = "{\n" + "\"roleId\":\"角色Id,判断新增或修改\",\n" + "\"roleName\":\"角色名称\",\n" + "\"meum\":[\n"
-                    + "{\n" + "\"meumId\":\"菜单id\",\n" + "\"roleMeumId\":\"菜单和角色Id,判断新增或修改\"\n" + "}\n," + "]\n"
-                    + "}", required = true, type = "JSONObject") @RequestBody String jsonObjectStr) {
+    public ResponseMessage saveAndUpdateRole(@RequestBody RoleRece roleRece) {
         ResponseMessage responseMessage = new ResponseMessage();
         try {
-            JSONObject jsonObject = new JSONObject(jsonObjectStr);
-            roleService.saveAndUpdateRole(jsonObject);
+            roleService.saveAndUpdateRole(roleRece);
             responseMessage.setMess("success");
             responseMessage.setSuccess(true);
         } catch (Exception e) {

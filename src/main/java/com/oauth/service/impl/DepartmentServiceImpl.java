@@ -10,23 +10,25 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.oauth.comon.RelationshipUtil;
 import com.oauth.comon.TreeUtil;
 import com.oauth.dao.DepartmentEntityMapper;
-import com.oauth.dao.RelationshipMapper;
-import com.oauth.dao.TreeEntityMapper;
+import com.oauth.tar.RelationshipMapper;
+import com.oauth.tar.TreeEntityMapper;
 import com.oauth.dao.UserInforEntityMapper;
 import com.oauth.entity.DepartmentEntity;
 import com.oauth.entity.DepartmentLeaderEntity;
+import com.oauth.entity.DepartmentRelationshipEntity;
+import com.oauth.receiving.DepartmentRece;
 import com.oauth.service.DepartmentService;
 import com.oauth.tar.RelationshipTarget;
 import com.oauth.tar.TreeTarget;
 import com.oauth.vo.DepartmentVo;
 
 import org.apache.commons.lang3.StringUtils;
-import org.json.JSONObject;
+import org.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cglib.beans.BeanCopier;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,6 +46,7 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     @Autowired
     public DepartmentServiceImpl(List<RelationshipMapper> relaMap, List<TreeEntityMapper> treeMap) {
+
         this.relaMap = relaMap.stream()
                 .collect(Collectors.toMap(sfcInter -> Objects
                         .requireNonNull(AnnotationUtils.findAnnotation(sfcInter.getClass(), RelationshipTarget.class))
@@ -59,19 +62,20 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void saveAndUpdateDepartment(JSONObject jsonObject) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        DepartmentEntity department = objectMapper.convertValue(jsonObject, DepartmentEntity.class);
+    public void saveAndUpdateDepartment(DepartmentRece departmentRece) {
+        BeanCopier copier = BeanCopier.create(DepartmentRece.class, DepartmentEntity.class,false);
+        DepartmentEntity department = new DepartmentEntity();
+        copier.copy(departmentRece, department, null);
         if (StringUtils.isNotBlank(department.getDepartmentName())) {
             if (department.getDepartmentId() == null || department.getDepartmentId() == 0) {
                 departmentEntityMapper.insertSelective(department);
             } else {
                 departmentEntityMapper.updateByPrimaryKeySelective(department);
             }
-            RelationshipUtil.relationship(jsonObject.optJSONArray("leader"), "departmentId",
+            RelationshipUtil.relationship(new JSONArray(departmentRece.getLeader()), "departmentId",
                     department.getDepartmentId(), DepartmentLeaderEntity.class, relaMap.get("DepartmentLeader"));
-            RelationshipUtil.relationship(jsonObject.optJSONArray("parent"), "departmentId",
-                    department.getDepartmentId(), DepartmentLeaderEntity.class, relaMap.get("DepartmentRelationship"));
+            RelationshipUtil.relationship(new JSONArray(departmentRece.getParent()), "departmentId",
+                    department.getDepartmentId(), DepartmentRelationshipEntity.class, relaMap.get("DepartmentRelationship"));
         }
     }
 

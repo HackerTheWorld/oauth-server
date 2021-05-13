@@ -56,7 +56,7 @@
 
   <resultMap id="RoleVo" extends="BaseResultMap" type="com.oauth.vo.RoleVo">
     <!--一对多，方式一-->
-    <collection id="meumEntity" type="com.oauth.entity.MeumEntityWithBLOBs">
+    <collection property="meum" ofType="com.oauth.entity.MeumEntityWithBLOBs" javaType="java.util.Set">
       <id column="meum_id" jdbcType="BIGINT" property="meumId" />
       <result column="meum_name" jdbcType="VARCHAR" property="meumName" />
       <result column="parent_id" jdbcType="BIGINT" property="parentId" />

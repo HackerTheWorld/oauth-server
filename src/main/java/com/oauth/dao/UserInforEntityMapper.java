@@ -4,9 +4,9 @@ import java.util.HashMap;
 import java.util.List;
 
 import com.oauth.entity.UserInforEntity;
+import com.oauth.tar.TreeEntityMapper;
 import com.oauth.tar.TreeTarget;
 import com.oauth.vo.UserInforVo;
-
 @TreeTarget(treeTarget = "UserInfoTree")
 public interface UserInforEntityMapper extends TreeEntityMapper<UserInforVo>{
     int deleteByPrimaryKey(Long id);

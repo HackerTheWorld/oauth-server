@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import com.oauth.entity.DepartmentEntity;
+import com.oauth.tar.TreeEntityMapper;
 import com.oauth.tar.TreeTarget;
 import com.oauth.vo.DepartmentVo;
 

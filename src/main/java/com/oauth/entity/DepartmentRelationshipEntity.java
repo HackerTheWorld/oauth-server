@@ -1,12 +1,19 @@
 package com.oauth.entity;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import nonapi.io.github.classgraph.json.Id;
+
+@ApiModel("上级部门")
 public class DepartmentRelationshipEntity {
+    @ApiModelProperty("部门关系id")
+    @Id
     private Long departmentRelationshipId;
-
+    @ApiModelProperty("部门id")
     private Long departmentId;
-
+    @ApiModelProperty("上级部门id")
     private Long departmentParentId;
-
+    @ApiModelProperty("上级部门路径")
     private String departmentPath;
 
     public Long getDepartmentRelationshipId() {

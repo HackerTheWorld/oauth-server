@@ -18,9 +18,7 @@ public class PostServiceImpl implements PostService{
     private PostEntityMapper postEntityMapper;
 
     @Override
-    public void saveAndUpdatePost(JSONObject jsonObject) throws Exception {
-        ObjectMapper objectMapper = new ObjectMapper();
-        PostEntity postEntity = objectMapper.convertValue(jsonObject, PostEntity.class);
+    public void saveAndUpdatePost(PostEntity postEntity) throws Exception {
         if(postEntity.getPostId() == null || postEntity.getPostId() == 0){
             postEntityMapper.insertSelective(postEntity);
         }else{

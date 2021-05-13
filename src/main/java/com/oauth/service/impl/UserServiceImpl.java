@@ -18,13 +18,15 @@ import com.oauth.comon.TreeUtil;
 import com.oauth.contons.MessageConstant;
 import com.oauth.converter.UserConverter;
 import com.oauth.dao.MeumEntityMapper;
-import com.oauth.dao.RelationshipMapper;
-import com.oauth.dao.TreeEntityMapper;
+import com.oauth.tar.RelationshipMapper;
+import com.oauth.tar.TreeEntityMapper;
 import com.oauth.dao.UserInforEntityMapper;
 import com.oauth.entity.DepartmentUserEntity;
 import com.oauth.entity.ParentUserEntity;
 import com.oauth.entity.PostUserEntity;
 import com.oauth.entity.UserInforEntity;
+import com.oauth.entity.UserRoleEntity;
+import com.oauth.receiving.UserInforRece;
 import com.oauth.service.UserService;
 import com.oauth.tar.RelationshipTarget;
 import com.oauth.tar.TreeTarget;
@@ -33,6 +35,7 @@ import com.oauth.vo.UserInforVo;
 import com.oauth.vo.UserPrincipal;
 
 import org.apache.commons.lang3.StringUtils;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cglib.beans.BeanCopier;
@@ -109,9 +112,10 @@ public class UserServiceImpl implements UserService {
 
   @Override
   @Transactional(rollbackFor = Exception.class)
-  public void saveAndUpdateUserInfor(JSONObject jsonObject) throws Exception {
-    ObjectMapper objectMapper = new ObjectMapper();
-    UserInforEntity userInforEntity = objectMapper.convertValue(jsonObject, UserInforEntity.class);
+  public void saveAndUpdateUserInfor(UserInforRece userInforRece) throws Exception {
+    BeanCopier copier = BeanCopier.create(UserInforRece.class, UserInforEntity.class,false);
+    UserInforEntity userInforEntity = new UserInforEntity();
+    copier.copy(userInforRece, userInforEntity, null);
     boolean isNew = userInforEntity.getUserId() == null || userInforEntity.getUserId() == 0;
     if (StringUtils.isBlank(userInforEntity.getUsername()) && isNew) {
       throw new Exception("用户名不能为空");
@@ -130,14 +134,14 @@ public class UserServiceImpl implements UserService {
     } else {
       userEntityMapper.updateByPrimaryKeySelective(userInforEntity);
     }
-    RelationshipUtil.relationship(jsonObject.optJSONArray("department"), "userId", userInforEntity.getUserId(),
+    RelationshipUtil.relationship(new JSONArray(userInforRece.getDepartment()), "userId", userInforEntity.getUserId(),
         DepartmentUserEntity.class, relaMap.get("DepartmentUser"));
-    RelationshipUtil.relationship(jsonObject.optJSONArray("post"), "userId", userInforEntity.getUserId(),
+    RelationshipUtil.relationship(new JSONArray(userInforRece.getPost()), "userId", userInforEntity.getUserId(),
         PostUserEntity.class, relaMap.get("PostUser"));
-    RelationshipUtil.relationship(jsonObject.optJSONArray("parent"), "userId", userInforEntity.getUserId(),
+    RelationshipUtil.relationship(new JSONArray(userInforRece.getParent()), "userId", userInforEntity.getUserId(),
         ParentUserEntity.class, relaMap.get("ParentUser"));
-    RelationshipUtil.relationship(jsonObject.optJSONArray("role"), "userId", userInforEntity.getUserId(),
-        PostUserEntity.class, relaMap.get("PostUser"));
+    RelationshipUtil.relationship(new JSONArray(userInforRece.getRole()), "userId", userInforEntity.getUserId(),
+    UserRoleEntity.class, relaMap.get("UserRole"));
 
   }
 

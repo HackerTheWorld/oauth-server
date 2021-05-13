@@ -1,9 +1,7 @@
 package com.oauth.comon;
 
-import java.lang.reflect.Field;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.oauth.dao.RelationshipMapper;
+import com.oauth.tar.RelationshipMapper;
 
 import org.json.JSONArray;
 import org.json.JSONObject;

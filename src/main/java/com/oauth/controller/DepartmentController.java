@@ -13,10 +13,9 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
+import com.oauth.receiving.DepartmentRece;
 import com.oauth.service.DepartmentService;
 import com.oauth.vo.ResponseMessage;
-
-import org.json.JSONObject;
 
 @Api(tags = { "部门" })
 @Controller
@@ -29,16 +28,10 @@ public class DepartmentController {
     @PostMapping("/saveAndUpdateDepartment")
     @ApiOperation(value = "新增或修改数据", httpMethod = "POST")
     @ResponseBody
-    public ResponseMessage saveAndUpdateDepartment(@ApiParam(value = "{\n" + "\"departmentId\": \"部门id,判断新增或修改\",\n"
-            + "\"departmentName\": \"部门名称\",\n" + "\"sort\": \"排序\",\n" + "\"status\": \"状态\",\n" + "\"leader\": [\n"
-            + "{\n" + "\"userId\": \"用户id\",\n" + "\"departmentLeaderId\": \"用户与部门关系Id判断新增或修改领导人\"\n" + "}\n" + "],\n"
-            + "\"parent\": [\n" + "{\n" + "\"departmentRelationshipId\": \"部门与部门关系Id判断是新增或修改上下部门关系\",\n"
-            + "\"parentId\": \"上级部门Id\",\n" + "\"parentPath\": \"上级部门路径\"\n" + "}\n" + "]\n"
-            + "}", required = true, type = "JSONObject") @RequestBody String jsonObjectStr) {
+    public ResponseMessage saveAndUpdateDepartment(@RequestBody DepartmentRece departmentRece) {
         ResponseMessage responseMessage = new ResponseMessage();
         try {
-            JSONObject jsonObject = new JSONObject(jsonObjectStr);
-            departmentService.saveAndUpdateDepartment(jsonObject);
+            departmentService.saveAndUpdateDepartment(departmentRece);
             responseMessage.setMess("success");
             responseMessage.setSuccess(true);
         } catch (Exception e) {

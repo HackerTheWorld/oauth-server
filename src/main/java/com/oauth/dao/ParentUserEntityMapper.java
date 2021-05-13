@@ -2,6 +2,7 @@ package com.oauth.dao;
 
 import com.oauth.entity.ParentUserEntity;
 import com.oauth.tar.RelationshipTarget;
+import com.oauth.tar.RelationshipMapper;
 @RelationshipTarget(relationshipTargetName = "ParentUser")
 public interface ParentUserEntityMapper extends RelationshipMapper<ParentUserEntity>{
     int deleteByPrimaryKey(Long parentUserId);

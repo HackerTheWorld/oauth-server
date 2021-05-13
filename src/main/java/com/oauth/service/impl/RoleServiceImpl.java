@@ -5,8 +5,12 @@ import com.oauth.service.RoleService;
 import com.oauth.tar.RelationshipTarget;
 import com.oauth.vo.RoleVo;
 import com.oauth.entity.RoleMeumEntity;
+import com.oauth.receiving.RoleRece;
+
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cglib.beans.BeanCopier;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,7 +22,7 @@ import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.oauth.comon.RelationshipUtil;
-import com.oauth.dao.RelationshipMapper;
+import com.oauth.tar.RelationshipMapper;
 import com.oauth.dao.RoleEntityMapper;;
 
 @Service
@@ -39,15 +43,16 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void saveAndUpdateRole(JSONObject jsonObject) throws Exception {
-        ObjectMapper objectMapper = new ObjectMapper();
-        RoleEntity roleEntity = objectMapper.convertValue(jsonObject, RoleEntity.class);
+    public void saveAndUpdateRole(RoleRece roleRece) throws Exception {
+        BeanCopier copier = BeanCopier.create(RoleRece.class, RoleEntity.class,false);
+        RoleEntity roleEntity = new RoleEntity();
+        copier.copy(roleRece, roleEntity, null);
         if (roleEntity.getRoleId() == null || roleEntity.getRoleId() == 0) {
             roleEntityMapper.insertSelective(roleEntity);
         } else {
             roleEntityMapper.updateByPrimaryKeySelective(roleEntity);
         }
-        RelationshipUtil.relationship(jsonObject.optJSONArray("role"), "roleId", roleEntity.getRoleId(),
+        RelationshipUtil.relationship(new JSONArray(roleRece.getMeum()), "roleId", roleEntity.getRoleId(),
                 RoleMeumEntity.class, relaMap.get("RoleMeum"));
     }
 

@@ -2,13 +2,12 @@ package com.oauth.service;
 
 import java.util.List;
 
+import com.oauth.receiving.RoleRece;
 import com.oauth.vo.RoleVo;
-
-import org.json.JSONObject;
 
 public interface RoleService {
     
-    void saveAndUpdateRole(JSONObject jsonObject) throws Exception;
+    void saveAndUpdateRole(RoleRece roleRece) throws Exception;
 
     List<RoleVo> selectRole(Long roleId,String roleName);
 }
