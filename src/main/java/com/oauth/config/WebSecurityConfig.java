@@ -22,7 +22,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
   protected void configure(HttpSecurity http) throws Exception {
     http.csrf().disable().authorizeRequests().antMatchers("/rsa/publicKey").permitAll().antMatchers("/department/**")
         .permitAll().antMatchers("/userInfor/**").permitAll().antMatchers("/post/**").permitAll()
-        .requestMatchers(EndpointRequest.toAnyEndpoint()).permitAll().anyRequest().authenticated();
+        .antMatchers("/meum/**").permitAll().requestMatchers(EndpointRequest.toAnyEndpoint()).permitAll().anyRequest()
+        .authenticated();
   }
 
   @Override
