@@ -66,13 +66,14 @@ public class UserInforController {
             @ApiParam(value = "部门", required = false, name = "department") @RequestParam(name = "department", required = false) String department,
             @ApiParam(value = "岗位Id", required = false, name = "postId") @RequestParam(name = "postId", required = false) Long postId,
             @ApiParam(value = "岗位", required = false, name = "post") @RequestParam(name = "post", required = false) String post,
-            @ApiParam(value = "岗位代码", required = false, name = "postCode") @RequestParam(name = "postCode", required = false) String postCode) {
+            @ApiParam(value = "岗位代码", required = false, name = "postCode") @RequestParam(name = "postCode", required = false) String postCode,
+            @ApiParam(value = "查询子项目深度,-1为全部树状结构", required = false, name = "needChild") @RequestParam(name = "needChild", required = false, defaultValue = "1") Integer needChild) {
         ResponseMessage responseMessage = new ResponseMessage();
         try {
             responseMessage.setMess("success");
             responseMessage.setSuccess(true);
             responseMessage.setData(userService.selectUserInfor(status, username, userId, realname, parentId,
-                    parentRealname, email, phone, departmentId, department, postId, post, postCode));
+                    parentRealname, email, phone, departmentId, department, postId, post, postCode,needChild));
         } catch (Exception e) {
             responseMessage.setMess(e.getMessage());
             responseMessage.setSuccess(false);

@@ -171,20 +171,7 @@
         and t2.department_id = #{departmentId}
     </if>
     <if test="departmentName != null and departmentName != ''">
-        and t2.department_name like concat('%',#{departmentName},'%')
-    </if>
-  </select>
-
-  <select id="selectDepartmentUserByName" resultType="java.lang.Long">
-    select t2.user_id userId
-    from department_user t1 
-    left join department t2 on t2.user_id = t1.user_id
-    where 1=1
-    <if test="departmentId != null and departmentId != 0">
-        and t2.department_id = #{departmentId}
-    </if>
-    <if test="departmentName != null and departmentName != ''">
-        and t2.department_name like concat('%',#{departmentName},'%')
+        and t2.department_name = #{departmentName}
     </if>
   </select>
 
@@ -197,7 +184,7 @@
         and t2.user_parent_id = #{departmentId}
     </if>
     <if test="userName != null and userName != ''">
-        and t2.user_name like concat('%',#{userName},'%')
+        and t2.user_name = #{userName}
     </if>
   </select>
 
@@ -226,6 +213,22 @@
       <result column="post_created_time" jdbcType="TIMESTAMP" property="createdTime" />
       <result column="post_status" jdbcType="INTEGER" property="status" />
     </collection>
+    <collection property="roleEntity" ofType="com.oauth.entity.RoleEntity">
+      <id column="role_id" jdbcType="BIGINT" property="roleId" />
+      <result column="role_name" jdbcType="VARCHAR" property="roleName" />
+    </collection>
+    <collection id="meumEntity" type="com.oauth.entity.MeumEntityWithBLOBs">
+      <id column="meum_id" jdbcType="BIGINT" property="meumId" />
+      <result column="meum_name" jdbcType="VARCHAR" property="meumName" />
+      <result column="parent_id" jdbcType="BIGINT" property="parentId" />
+      <result column="meum_type" jdbcType="VARCHAR" property="meumType" />
+      <result column="is_refresh" jdbcType="INTEGER" property="isRefresh" />
+      <result column="order_number" jdbcType="INTEGER" property="orderNumber" />
+      <result column="visible" jdbcType="INTEGER" property="visible" />
+      <result column="target" jdbcType="VARCHAR" property="target" />
+      <result column="url" jdbcType="LONGVARCHAR" property="url" />
+      <result column="icon" jdbcType="LONGVARCHAR" property="icon" />
+    </collection>
   </resultMap>
 
   <select id="selectUserInforVos" resultMap="UserInforVo">
@@ -241,24 +244,66 @@
       left join department t3 on t3.department_id = c.department_id
       left join post_user d on d.user_id = t1.user_id
       left join post t4 on t4.post_id = d.post_id
-    where
-      1=1
-      <if test="param.username != null and param.username != ''">
+      left join user_role e on e.user_id = t1.user_id
+      left join role t5 on t5.role_id = e.role_id
+    where 1=1
+    <if test="param.username != null and param.username != ''">
         and t1.username = #{param.username}
-      </if>
-      <if test="param.status != null and param.status != 0">
+    </if>
+    <if test="param.status != null and param.status != 0">
         and t1.status = #{param.status}
-      </if>
-      <if test="param.phone != null and param.phone != ''">
+    </if>
+    <if test="param.phone != null and param.phone != ''">
         and t1.phone = #{param.phone}
-      </if>
-      <if test="param.email != null and param.email != ''">
+    </if>
+    <if test="param.email != null and param.email != ''">
         and t1.email = #{param.email}
-      </if>
-      <if test="userIds != null and userIds.size > 0">
-        <foreach collection="userIds" item="item" index="index" open="and t1.user_id in (" close=")" separator=",">
+    </if>
+    <if test="userIds != null and userIds.size > 0">
+      <foreach collection="userIds" item="item" index="index" open="and t1.user_id in (" close=")" separator=",">
           #{item}
       </foreach>
-      </if>
+    </if>
   </select>
+
+  
+  <select id="selectChild" resultMap="UserInforVo">
+    select 
+      t1.user_id, t1.username, t1.realname,t1.phone,t1.email, t1.status,
+      t2.user_id parent_user_id, t2.username parent_username, t2.realname parent_realname,t2.phone parent_phone,t2.email parent_email, t2.status parent_status,
+      t3.department_id,t3.department_name,t3.sort department_sort,t3.created_time department_created_time,t3.status department_status,
+      t4.post_id,t4.post_code,t4.post_name,t4.sort post_sort,t4.status post_status,t4.created_time post_created_time
+    from user_infor t1
+      left join parent_user b on b.user_id = t1.user_id
+      left join user_infor t2 on t2.user_id = b.parent_user_id
+      left join department_user c on c.user_id = t1.user_id
+      left join department t3 on t3.department_id = c.department_id
+      left join post_user d on d.user_id = t1.user_id
+      left join post t4 on t4.post_id = d.post_id
+      left join user_role e on e.user_id = t1.user_id
+      left join role t5 on t5.role_id = e.role_id
+    where 1=1
+    <if test="parentList != null and parentList.size > 0">
+      <foreach collection="parentList" item="item" index="index" open="and t1.user_id in (" close=")" separator=",">
+          #{item}
+      </foreach>
+    </if>
+  </select>
+
+
+    <select id="selectIdChildByName" resultMap="BaseResultMap">
+    select 
+      distinct
+      t1.user_id
+    from user_infor t1
+    left join parent_user t3 on t3.user_id = t1.user_id
+    where 1=1
+    <if test="parentId != null and parentId != 0">
+      and t3.parent_user_id = #{parentId}
+    </if>
+    <if test="parentId == 0">
+      and t3.parent_user_id is null
+    </if>
+  </select>
+
 </mapper>

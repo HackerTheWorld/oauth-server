@@ -4,9 +4,11 @@ import java.util.HashMap;
 import java.util.List;
 
 import com.oauth.entity.UserInforEntity;
+import com.oauth.tar.TreeTarget;
 import com.oauth.vo.UserInforVo;
 
-public interface UserInforEntityMapper {
+@TreeTarget(treeTarget = "UserInfoTree")
+public interface UserInforEntityMapper extends TreeEntityMapper<UserInforVo>{
     int deleteByPrimaryKey(Long id);
 
     int insert(UserInforEntity record);
@@ -30,4 +32,8 @@ public interface UserInforEntityMapper {
     List<Long> selectParentUserByName(Long parentId, String parentName);
 
     List<UserInforVo> selectUserInforVos(HashMap<String,Object> param,List<Long> userIds);
+
+    List<Long> selectIdChildByName(Long parentId);
+
+    List<UserInforVo> selectChild(List<Long> parentList);
 }

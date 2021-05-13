@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.oauth.dao.RoleMeumEntityMapper">
+  <resultMap id="BaseResultMap" type="com.oauth.entity.RoleMeumEntity">
+    <id column="role_meum_id" jdbcType="BIGINT" property="roleMeumId" />
+    <result column="meum_id" jdbcType="BIGINT" property="meumId" />
+    <result column="role_id" jdbcType="BIGINT" property="roleId" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    role_meum_id, meum_id, role_id
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from role_meum
+    where role_meum_id = #{roleMeumId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from role_meum
+    where role_meum_id = #{roleMeumId,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.oauth.entity.RoleMeumEntity">
+    insert into role_meum (role_meum_id, meum_id, role_id
+      )
+    values (#{roleMeumId,jdbcType=BIGINT}, #{meumId,jdbcType=BIGINT}, #{roleId,jdbcType=BIGINT}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.oauth.entity.RoleMeumEntity">
+    insert into role_meum
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="roleMeumId != null and roleMeumId != 0">
+        role_meum_id,
+      </if>
+      <if test="meumId != null and meumId != 0">
+        meum_id,
+      </if>
+      <if test="roleId != null and roleId != 0">
+        role_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="roleMeumId != null and roleMeumId != 0">
+        #{roleMeumId,jdbcType=BIGINT},
+      </if>
+      <if test="meumId != null and meumId != 0">
+        #{meumId,jdbcType=BIGINT},
+      </if>
+      <if test="roleId != null and roleId != 0">
+        #{roleId,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.oauth.entity.RoleMeumEntity">
+    update role_meum
+    <set>
+      <if test="meumId != null and meumId != 0">
+        meum_id = #{meumId,jdbcType=BIGINT},
+      </if>
+      <if test="roleId != null and roleId != 0">
+        role_id = #{roleId,jdbcType=BIGINT},
+      </if>
+    </set>
+    where role_meum_id = #{roleMeumId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.oauth.entity.RoleMeumEntity">
+    update role_meum
+    set meum_id = #{meumId,jdbcType=BIGINT},
+      role_id = #{roleId,jdbcType=BIGINT}
+    where role_meum_id = #{roleMeumId,jdbcType=BIGINT}
+  </update>
+</mapper>

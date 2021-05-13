@@ -2,6 +2,7 @@ package com.oauth.service.impl;
 
 import java.util.List;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.oauth.dao.PostEntityMapper;
 import com.oauth.entity.PostEntity;
 import com.oauth.service.PostService;
@@ -18,21 +19,11 @@ public class PostServiceImpl implements PostService{
 
     @Override
     public void saveAndUpdatePost(JSONObject jsonObject) throws Exception {
-        Long postId = jsonObject.optLong("postId", 0);
-        String postCode = jsonObject.optString("postCode","");
-        String postName = jsonObject.optString("postName","");
-        Integer sort = jsonObject.optInt("sort",0);
-        Integer status = jsonObject.optInt("status",0);
-
-        PostEntity postEntity = new PostEntity();
-        postEntity.setPostCode(postCode);
-        postEntity.setPostName(postName);
-        postEntity.setSort(sort);
-        postEntity.setStatus(status);
-        if(postId == 0){
+        ObjectMapper objectMapper = new ObjectMapper();
+        PostEntity postEntity = objectMapper.convertValue(jsonObject, PostEntity.class);
+        if(postEntity.getPostId() == null || postEntity.getPostId() == 0){
             postEntityMapper.insertSelective(postEntity);
         }else{
-            postEntity.setPostId(postId);
             postEntityMapper.updateByPrimaryKeySelective(postEntity);
         }
     }

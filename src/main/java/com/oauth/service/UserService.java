@@ -11,5 +11,5 @@ public interface UserService extends UserDetailsService {
     
     void saveAndUpdateUserInfor(JSONObject jsonObject) throws Exception;
 
-    List<UserInforVo> selectUserInfor(Integer status,String username,Long userId,String realname,Long parentId,String parentRealname,String email,String phone,Long departmentId,String department,Long postId,String post,String postCode);
+    List<UserInforVo> selectUserInfor(Integer status,String username,Long userId,String realname,Long parentId,String parentRealname,String email,String phone,Long departmentId,String department,Long postId,String post,String postCode,Integer needChild);
 }

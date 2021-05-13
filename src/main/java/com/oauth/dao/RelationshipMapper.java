@@ -4,5 +4,5 @@ public interface RelationshipMapper<T> {
     
     int insertSelective(T record);
 
-    int updateByPrimaryKey(T record);
+    int updateByPrimaryKeySelective(T record);
 }

@@ -5,21 +5,29 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import javax.security.auth.login.AccountExpiredException;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.oauth.comon.RelationshipUtil;
+import com.oauth.comon.TreeUtil;
 import com.oauth.contons.MessageConstant;
 import com.oauth.converter.UserConverter;
+import com.oauth.dao.MeumEntityMapper;
 import com.oauth.dao.RelationshipMapper;
+import com.oauth.dao.TreeEntityMapper;
 import com.oauth.dao.UserInforEntityMapper;
 import com.oauth.entity.DepartmentUserEntity;
 import com.oauth.entity.ParentUserEntity;
 import com.oauth.entity.PostUserEntity;
 import com.oauth.entity.UserInforEntity;
 import com.oauth.service.UserService;
-import com.oauth.tar.RelationshipTar;
+import com.oauth.tar.RelationshipTarget;
+import com.oauth.tar.TreeTarget;
 import com.oauth.vo.User;
 import com.oauth.vo.UserInforVo;
 import com.oauth.vo.UserPrincipal;
@@ -46,15 +54,27 @@ public class UserServiceImpl implements UserService {
   private UserInforEntityMapper userEntityMapper;
   @Autowired
   private PasswordEncoder passwordEncoder;
+  @Autowired
+  private MeumEntityMapper meumEntityMapper;
 
   private final Map<String, RelationshipMapper> relaMap;
 
+  private final Map<String, TreeEntityMapper> treeMap;
+
   @Autowired
-  public UserServiceImpl(List<RelationshipMapper> sfcInterListAuto) {
-    relaMap = sfcInterListAuto.stream()
+  public UserServiceImpl(List<RelationshipMapper> relaMap, List<TreeEntityMapper> treeMap) {
+
+    this.relaMap = relaMap.stream()
         .collect(Collectors.toMap(sfcInter -> Objects
-            .requireNonNull(AnnotationUtils.findAnnotation(sfcInter.getClass(), RelationshipTar.class))
-            .relationshipTarName(), v -> v, (v1, v2) -> v1));
+            .requireNonNull(AnnotationUtils.findAnnotation(sfcInter.getClass(), RelationshipTarget.class))
+            .relationshipTargetName(), v -> v, (v1, v2) -> v1));
+
+    this.treeMap = treeMap.stream()
+        .collect(
+            Collectors.toMap(
+                sfcInter -> Objects
+                    .requireNonNull(AnnotationUtils.findAnnotation(sfcInter.getClass(), TreeTarget.class)).treeTarget(),
+                v -> v, (v1, v2) -> v1));
   }
 
   @Override
@@ -90,35 +110,24 @@ public class UserServiceImpl implements UserService {
   @Override
   @Transactional(rollbackFor = Exception.class)
   public void saveAndUpdateUserInfor(JSONObject jsonObject) throws Exception {
-    Long userId = jsonObject.optLong("userId", 0);
-    String username = jsonObject.optString("username", "");
-    String password = jsonObject.optString("password", "");
-    UserInforEntity userInforEntity = new UserInforEntity();
-    if (StringUtils.isBlank(username) && userId == 0) {
+    ObjectMapper objectMapper = new ObjectMapper();
+    UserInforEntity userInforEntity = objectMapper.convertValue(jsonObject, UserInforEntity.class);
+    boolean isNew = userInforEntity.getUserId() == null || userInforEntity.getUserId() == 0;
+    if (StringUtils.isBlank(userInforEntity.getUsername()) && isNew) {
       throw new Exception("用户名不能为空");
     } else {
-      if (userId == 0 && !CollectionUtils.isEmpty(userEntityMapper.selectByUsername(username, null))) {
+      if (isNew && !CollectionUtils.isEmpty(userEntityMapper.selectByUsername(userInforEntity.getUsername(), null))) {
         throw new Exception("用户名已存在");
       }
     }
-    if (StringUtils.isBlank(password) && userId == 0) {
+    if (StringUtils.isBlank(userInforEntity.getPassword()) && isNew) {
       throw new Exception("密码不能为空");
     }
-    String email = jsonObject.optString("email", "");
-    String realname = jsonObject.optString("realname", "");
-    String phone = jsonObject.optString("phone", "");
-    Integer status = jsonObject.optInt("status", 1);
 
-    userInforEntity.setUsername(username);
-    userInforEntity.setPassword(passwordEncoder.encode(password));
-    userInforEntity.setEmail(email);
-    userInforEntity.setRealname(realname);
-    userInforEntity.setPhone(phone);
-    userInforEntity.setStatus(status);
-    if (userId == 0) {
+    userInforEntity.setPassword(passwordEncoder.encode(userInforEntity.getPassword()));
+    if (isNew) {
       userEntityMapper.insertSelective(userInforEntity);
     } else {
-      userInforEntity.setUserId(userId);
       userEntityMapper.updateByPrimaryKeySelective(userInforEntity);
     }
     RelationshipUtil.relationship(jsonObject.optJSONArray("department"), "userId", userInforEntity.getUserId(),
@@ -135,8 +144,28 @@ public class UserServiceImpl implements UserService {
   @Override
   public List<UserInforVo> selectUserInfor(Integer status, String username, Long userId, String realname,
       Long parentUserId, String parentRealname, String email, String phone, Long departmentId, String department,
-      Long postId, String post, String postCode) {
+      Long postId, String post, String postCode, Integer needChild) {
     boolean needUserId = false;
+
+    Consumer<List<UserInforVo>> distinctVo = (list) -> {
+      for (UserInforVo userInforVoEle : list) {
+        userInforVoEle.setDepartmentUser(userInforVoEle.getDepartmentUser().stream()
+            .filter(predicate -> predicate.getDepartmentId() != null).distinct().collect(Collectors.toSet()));
+        userInforVoEle.setParent(userInforVoEle.getParent().stream().filter(predicate -> predicate.getUserId() != null)
+            .distinct().collect(Collectors.toSet()));
+        userInforVoEle.setPostEntity(userInforVoEle.getPostEntity().stream()
+            .filter(predicate -> predicate.getPostId() != null).distinct().collect(Collectors.toSet()));
+        userInforVoEle.setRoleEntity(userInforVoEle.getRoleEntity().stream()
+            .filter(predicate -> predicate.getRoleId() != null).distinct().collect(Collectors.toSet()));
+        userInforVoEle.getRoleEntity().forEach(action -> userInforVoEle.setMeumEntity(
+            meumEntityMapper.selectMeumByRoleId(action.getRoleId()).stream().collect(Collectors.toSet())));
+      }
+    };
+
+    BiConsumer<Set<UserInforVo>, UserInforVo> setChildren = (list, userVo) -> {
+      userVo.setChildren(list);
+    };
+
     List<Long> userIdList = new ArrayList<Long>();
     if (postId != null || StringUtils.isNotBlank(post) || StringUtils.isNotBlank(postCode)) {
       needUserId = true;
@@ -182,12 +211,15 @@ public class UserServiceImpl implements UserService {
     param.put("email", email);
 
     List<UserInforVo> userInforVos = userEntityMapper.selectUserInforVos(param, userIdList);
-    for (UserInforVo userInforVo : userInforVos) {
-      userInforVo.setDepartmentUser(userInforVo.getDepartmentUser().stream()
-          .filter(predicate -> predicate.getDepartmentId() != null).collect(Collectors.toList()));
-      userInforVo.setParent(userInforVo.getParent().stream().filter(predicate -> predicate.getUserId() != null)
-          .collect(Collectors.toList()));
+    distinctVo.accept(userInforVos);
+
+    if (needChild == 1) {
+      return userInforVos;
+    } else {
+      TreeUtil.traversalTree(userInforVos, needChild, UserInforVo.class, treeMap.get("UserInforTree"), distinctVo,
+          setChildren);
     }
+
     return userInforVos;
   }
 

@@ -1,109 +1,73 @@
 package com.oauth.vo;
 
-import java.util.List;
+import java.util.Set;
 
 import com.oauth.entity.DepartmentEntity;
+import com.oauth.entity.MeumEntityWithBLOBs;
 import com.oauth.entity.PostEntity;
+import com.oauth.entity.RoleEntity;
+import com.oauth.entity.UserInforEntity;
 
-public class UserInforVo {
-    private Long userId;
+public class UserInforVo extends UserInforEntity{
 
-    private String username;
+    private Set<UserInforVo> parent;
 
-    private Integer status;
+    private Set<UserInforVo> children;
 
-    private String phone;
+    private Set<RoleEntity> roleEntity;
 
-    private String realname;
+    private Set<MeumEntityWithBLOBs> meumEntity;
 
-    private String email;
+    private Set<DepartmentEntity> departmentUser;
 
-    private List<UserInforVo> parent;
+    private Set<PostEntity> postEntity;
 
-    private List<UserInforVo> child;
+    public Set<MeumEntityWithBLOBs> getMeumEntity() {
+        return meumEntity;
+    }
 
-    private List<DepartmentEntity> departmentUser;
+    public void setMeumEntity(Set<MeumEntityWithBLOBs> meumEntity) {
+        this.meumEntity = meumEntity;
+    }
 
-    private List<PostEntity> postUserEntity;
+    public Set<RoleEntity> getRoleEntity() {
+        return roleEntity;
+    }
 
-    public List<UserInforVo> getParent() {
+    public void setRoleEntity(Set<RoleEntity> roleEntity) {
+        this.roleEntity = roleEntity;
+    }
+
+    public Set<UserInforVo> getParent() {
         return parent;
     }
 
-    public void setParent(List<UserInforVo> parent) {
+    public void setParent(Set<UserInforVo> parent) {
         this.parent = parent;
     }
 
-    public List<UserInforVo> getChild() {
-        return child;
+    public Set<UserInforVo> getChildren() {
+        return children;
     }
 
-    public void setChild(List<UserInforVo> child) {
-        this.child = child;
+    public void setChildren(Set<UserInforVo> children) {
+        this.children = children;
     }
 
-    public Long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public Integer getStatus() {
-        return status;
-    }
-
-    public void setStatus(Integer status) {
-        this.status = status;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
-
-    public String getRealname() {
-        return realname;
-    }
-
-    public void setRealname(String realname) {
-        this.realname = realname;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public List<DepartmentEntity> getDepartmentUser() {
+    public Set<DepartmentEntity> getDepartmentUser() {
         return departmentUser;
     }
 
-    public void setDepartmentUser(List<DepartmentEntity> departmentUser) {
+    public void setDepartmentUser(Set<DepartmentEntity> departmentUser) {
         this.departmentUser = departmentUser;
     }
 
-    public List<PostEntity> getPostUserEntity() {
-        return postUserEntity;
+    public Set<PostEntity> getPostEntity() {
+        return postEntity;
     }
 
-    public void setPostUserEntity(List<PostEntity> postUserEntity) {
-        this.postUserEntity = postUserEntity;
+    public void setPostEntity(Set<PostEntity> postEntity) {
+        this.postEntity = postEntity;
     }
 
 }

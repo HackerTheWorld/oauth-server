@@ -1,18 +1,20 @@
 package com.oauth.dao;
 
 import com.oauth.entity.UserRoleEntity;
-import com.oauth.tar.RelationshipTar;
+import com.oauth.tar.RelationshipTarget;
 
-@RelationshipTar(relationshipTarName = "UserRole")
+@RelationshipTarget(relationshipTargetName = "UserRole")
 public interface UserRoleEntityMapper extends RelationshipMapper<UserRoleEntity>{
     int deleteByPrimaryKey(Long userRoleId);
 
     int insert(UserRoleEntity record);
 
+    @Override
     int insertSelective(UserRoleEntity record);
 
     UserRoleEntity selectByPrimaryKey(Long userRoleId);
 
+    @Override
     int updateByPrimaryKeySelective(UserRoleEntity record);
 
     int updateByPrimaryKey(UserRoleEntity record);

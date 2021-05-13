@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.oauth.dao.MeumEntityMapper">
+  <resultMap id="BaseResultMap" type="com.oauth.entity.MeumEntity">
+    <id column="meum_id" jdbcType="BIGINT" property="meumId" />
+    <result column="meum_name" jdbcType="VARCHAR" property="meumName" />
+    <result column="parent_id" jdbcType="BIGINT" property="parentId" />
+    <result column="meum_type" jdbcType="VARCHAR" property="meumType" />
+    <result column="is_refresh" jdbcType="INTEGER" property="isRefresh" />
+    <result column="order_number" jdbcType="INTEGER" property="orderNumber" />
+    <result column="visible" jdbcType="INTEGER" property="visible" />
+    <result column="target" jdbcType="VARCHAR" property="target" />
+    <result column="parent_path" jdbcType="VARCHAR" property="parentPath" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.oauth.entity.MeumEntityWithBLOBs">
+    <result column="url" jdbcType="LONGVARCHAR" property="url" />
+    <result column="icon" jdbcType="LONGVARCHAR" property="icon" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    meum_id, meum_name, parent_id, meum_type, is_refresh, order_number, visible, target,parent_path
+  </sql>
+  <sql id="Blob_Column_List">
+    url, icon
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from meum
+    where meum_id = #{meumId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from meum
+    where meum_id = #{meumId,jdbcType=BIGINT}
+  </delete>
+  <insert id="insertSelective" parameterType="com.oauth.entity.MeumEntityWithBLOBs">
+    insert into meum
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="meumId != null and meumId != 0">
+        meum_id,
+      </if>
+      <if test="meumName != null and meumName != ''">
+        meum_name,
+      </if>
+      <if test="parentId != null and parentId != 0">
+        parent_id,
+      </if>
+      <if test="meumType != null and meumType != ''">
+        meum_type,
+      </if>
+      <if test="isRefresh != null and isRefresh != -1">
+        is_refresh,
+      </if>
+      <if test="orderNumber != null and orderNumber != 0">
+        order_number,
+      </if>
+      <if test="visible != null and visible != -1">
+        visible,
+      </if>
+      <if test="target != null and target != ''">
+        target,
+      </if>
+      <if test="url != null and url != ''">
+        url,
+      </if>
+      <if test="icon != null and icon != ''">
+        icon,
+      </if>
+      <if test="parentPath != null and parentPath != ''">
+        parent_path,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="meumId != null and meumId != 0"> #{meumId,jdbcType=BIGINT},
+      </if>
+      <if test="meumName != null and meumName != ''"> #{meumName,jdbcType=VARCHAR},
+      </if>
+      <if test="parentId != null and parentId != 0"> #{parentId,jdbcType=BIGINT},
+      </if>
+      <if test="meumType != null and meumType != ''"> #{meumType,jdbcType=VARCHAR},
+      </if>
+      <if test="isRefresh != null and isRefresh != -1"> #{isRefresh,jdbcType=INTEGER},
+      </if>
+      <if test="orderNumber != null and orderNumber != 0"> #{orderNumber,jdbcType=INTEGER},
+      </if>
+      <if test="visible != null and visible != -1"> #{visible,jdbcType=INTEGER},
+      </if>
+      <if test="target != null and target != ''"> #{target,jdbcType=VARCHAR},
+      </if>
+      <if test="url != null and url != ''"> #{url,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="icon != null and icon != ''"> #{icon,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.oauth.entity.MeumEntityWithBLOBs">
+    update meum
+    <set>
+      <if test="meumName != null and meumId != 0">
+        meum_name = #{meumName,jdbcType=VARCHAR},
+      </if>
+      <if test="parentId != null and meumId != 0">
+        parent_id = #{parentId,jdbcType=BIGINT},
+      </if>
+      <if test="meumType != null and meumId != 0">
+        meum_type = #{meumType,jdbcType=VARCHAR},
+      </if>
+      <if test="isRefresh != null and meumId != 0">
+        is_refresh = #{isRefresh,jdbcType=INTEGER},
+      </if>
+      <if test="orderNumber != null and meumId != 0">
+        order_number = #{orderNumber,jdbcType=INTEGER},
+      </if>
+      <if test="visible != null and visible != -1">
+        visible = #{visible,jdbcType=INTEGER},
+      </if>
+      <if test="target != null and target != ''">
+        target = #{target,jdbcType=VARCHAR},
+      </if>
+      <if test="url != null and url != ''">
+        url = #{url,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="icon != null and icon != ''">
+        icon = #{icon,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where meum_id = #{meumId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.oauth.entity.MeumEntityWithBLOBs">
+    update meum
+    set meum_name = #{meumName,jdbcType=VARCHAR},
+      parent_id = #{parentId,jdbcType=BIGINT},
+      meum_type = #{meumType,jdbcType=VARCHAR},
+      is_refresh = #{isRefresh,jdbcType=INTEGER},
+      order_number = #{orderNumber,jdbcType=INTEGER},
+      visible = #{visible,jdbcType=INTEGER},
+      target = #{target,jdbcType=VARCHAR},
+      url = #{url,jdbcType=LONGVARCHAR},
+      icon = #{icon,jdbcType=LONGVARCHAR}
+    where meum_id = #{meumId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.oauth.entity.MeumEntity">
+    update meum
+    set meum_name = #{meumName,jdbcType=VARCHAR},
+      parent_id = #{parentId,jdbcType=BIGINT},
+      meum_type = #{meumType,jdbcType=VARCHAR},
+      is_refresh = #{isRefresh,jdbcType=INTEGER},
+      order_number = #{orderNumber,jdbcType=INTEGER},
+      visible = #{visible,jdbcType=INTEGER},
+      target = #{target,jdbcType=VARCHAR}
+    where meum_id = #{meumId,jdbcType=BIGINT}
+  </update>
+
+  <select id="selectMeumByRoleId" parameterType="java.lang.Long" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from meum t1
+    left join role_meum t2 on t2.meum_id = t1.meum_id
+    where 1=1
+    <if test="roleId != null and roleId != 0">
+        and t2.role_id = #{roleId} 
+    </if>
+  </select>
+
+
+  MeumVo
+</mapper>

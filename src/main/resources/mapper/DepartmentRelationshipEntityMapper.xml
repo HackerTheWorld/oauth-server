@@ -79,17 +79,12 @@
     </set>
     where department_relationship_id = #{departmentRelationshipId,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.oauth.entity.DepartmentRelationshipEntity">
+
+  <update id="updateByPrimaryKey" parameterType="com.oauth.entity.DepartmentRelationshipEntity">
     update department_relationship
     set department_id = #{departmentId,jdbcType=BIGINT},
       department_parent_id = #{departmentParentId,jdbcType=BIGINT},
       department_path = #{departmentPath,jdbcType=LONGVARCHAR}
-    where department_relationship_id = #{departmentRelationshipId,jdbcType=BIGINT}
-  </update>
-  <update id="updateByPrimaryKey" parameterType="com.oauth.entity.DepartmentRelationshipEntity">
-    update department_relationship
-    set department_id = #{departmentId,jdbcType=BIGINT},
-      department_parent_id = #{departmentParentId,jdbcType=BIGINT}
     where department_relationship_id = #{departmentRelationshipId,jdbcType=BIGINT}
   </update>
 </mapper>

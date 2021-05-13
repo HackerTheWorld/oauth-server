@@ -17,21 +17,13 @@ public class RelationshipUtil {
             jsonObject.put(colum, relId);
             ObjectMapper objectMapper = new ObjectMapper();
             Object record = objectMapper.convertValue(jsonObject, cls);
+            Object objId = ReflexUtil.getValueByTarget(record,cls,org.springframework.data.annotation.Id.class);
             Long id = null;
-            Field[] fields = cls.getDeclaredFields();
-            for (Field field : fields) {
-              if (field.isAnnotationPresent(org.springframework.data.annotation.Id.class)) {
-                try {
-                  field.setAccessible(true);
-                  id = field.getLong(record);
-                } catch (Exception e) {
-                  e.printStackTrace();
-                }
-                break;
-              }
+            if(objId instanceof Long){
+              id = (Long)objId;
             }
             if (id != null && id != 0) {
-              relationshipMapper.updateByPrimaryKey(record);
+              relationshipMapper.updateByPrimaryKeySelective(record);
             } else {
               relationshipMapper.insertSelective(record);
             }

@@ -4,9 +4,11 @@ import java.util.HashMap;
 import java.util.List;
 
 import com.oauth.entity.DepartmentEntity;
+import com.oauth.tar.TreeTarget;
 import com.oauth.vo.DepartmentVo;
 
-public interface DepartmentEntityMapper {
+@TreeTarget(treeTarget = "DepartmentTree")
+public interface DepartmentEntityMapper extends TreeEntityMapper<DepartmentVo>{
     int deleteByPrimaryKey(Long departmentId);
 
     int insert(DepartmentEntity record);
@@ -21,7 +23,9 @@ public interface DepartmentEntityMapper {
 
     List<DepartmentEntity> selectParentByName(String parentDepartmentName,Long parentId);
 
-    List<DepartmentEntity> selectChildByName(Long parentId);
-
     List<DepartmentVo> selectDepartment(HashMap<String,Object> param,List<Long> departmentList);
+    @Override
+    List<Long> selectIdChildByName(Long parentId);
+    @Override
+    List<DepartmentVo> selectChild(List<Long> departmentList);
 }

@@ -1,17 +1,17 @@
 package com.oauth.dao;
 
 import com.oauth.entity.DepartmentUserEntity;
-import com.oauth.tar.RelationshipTar;
-@RelationshipTar(relationshipTarName = "DepartmentUser")
+import com.oauth.tar.RelationshipTarget;
+@RelationshipTarget(relationshipTargetName = "DepartmentUser")
 public interface DepartmentUserEntityMapper extends RelationshipMapper<DepartmentUserEntity>{
     int deleteByPrimaryKey(Long departmentUserId);
 
     int insert(DepartmentUserEntity record);
-
+    @Override
     int insertSelective(DepartmentUserEntity record);
 
     DepartmentUserEntity selectByPrimaryKey(Long departmentUserId);
-
+    @Override
     int updateByPrimaryKeySelective(DepartmentUserEntity record);
 
     int updateByPrimaryKey(DepartmentUserEntity record);

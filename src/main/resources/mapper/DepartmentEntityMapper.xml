@@ -96,7 +96,7 @@
       <result column="realname" jdbcType="VARCHAR" property="realname" />
       <result column="email" jdbcType="VARCHAR" property="email" />
     </collection>
-    <collection property="parents" ofType="com.oauth.entity.DepartmentRelationshipEntity">
+    <collection property="parent" ofType="com.oauth.entity.DepartmentRelationshipEntity">
       <id column="department_relationship_id" jdbcType="BIGINT" property="departmentRelationshipId" />
       <result column="department_id" jdbcType="BIGINT" property="departmentId" />
       <result column="department_parent_id" jdbcType="BIGINT" property="departmentParentId" />
@@ -127,10 +127,10 @@
     </if>
   </select>
 
-  <select id="selectChildByName" resultMap="BaseResultMap">
+  <select id="selectIdChildByName" resultMap="BaseResultMap">
     select 
       distinct
-      t1.department_id, t1.department_name, t1.sort, t1.created_time, t1.status
+      t1.department_id
     from department t1
     left join department_relationship t3 on t3.department_id = t1.department_id
     where 1=1
@@ -157,6 +157,24 @@
     </if>
     <if test="parentDepartmentName != null and parentDepartmentName != ''">
       and department_name like concat('%',#{parentDepartmentName},'%')
+    </if>
+  </select>
+
+  
+  <select id="selectChild" parameterType="java.util.List" resultMap="DepartmentVo">
+    select 
+      distinct
+      t1.department_id, t1.department_name, t1.sort, t1.created_time, t1.status,t4.*,t3.*
+    from 
+      department t1 
+      left join department_leader t2 on t1.department_id = t2.department_id
+      left join user_infor t4 on t4.user_id = t2.user_id
+      left join department_relationship t3 on t3.department_id = t1.department_id
+    where 1=1 
+    <if test="departmentList != null and departmentList.size > 0">
+      <foreach collection="departmentList" item="item" index="index" open="and t1.department_id in (" close=")" separator=",">
+          #{item}
+      </foreach>
     </if>
   </select>
 </mapper>

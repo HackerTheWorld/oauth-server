@@ -1,11 +1,16 @@
 package com.oauth.controller;
 
+import com.oauth.service.MeumService;
 import com.oauth.vo.ResponseMessage;
 
+import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import io.swagger.annotations.Api;
@@ -17,14 +22,47 @@ import io.swagger.annotations.ApiParam;
 @RequestMapping("/meum")
 public class MeumController {
 
+    @Autowired
+    private MeumService meumService;
+
     @PostMapping("/saveAndUpdateMeum")
     @ApiOperation(value = "新增或修改数据", httpMethod = "POST")
     @ResponseBody
-    public ResponseMessage saveAndUpdateMeum(@ApiParam(value = "{\n" + "\"meumId\":\"菜单Id,判断新增或修改\",\n" + "\"meumName\":\"菜单名称\",\n"
-                    + "\"url\":\"菜单地址\",\n" + "\"parentId\":\"父亲菜单名称,跟菜单为0\",\n" + "\"meumType\":\"菜单类型,M:菜单,B:按钮\",\n"
-                    + "\"perms\":\"权限对应的岗位,多个岗位用|分割\",\n" + "\"roleIds\":[\n" + "\"角色id\",\"\"\n" + "]\n"
-                    + "}", required = true, type = "JSONObject") @RequestBody String jsonObjectStr) {
+    public ResponseMessage saveAndUpdateMeum(@ApiParam(value = "{\n" + "\"meumId\":\"菜单Id,判断新增修改\",\n"
+            + "\"meumName\":\"菜单名称\",\n" + "\"parentId\":\"上级菜单\",\n" + "\"meumType\":\"菜单类型\",\n"
+            + "\"isRefresh\":\"是否刷新\",\n" + "\"orderNumber\":\"排序\",\n" + "\"visible\":\"是否显示\",\n"
+            + "\"target\":\"开打方式,1.标签 2.新窗口\",\n" + "\"parentPath\":\"菜单路由\"\n"
+            + "}", required = true, type = "JSONObject") @RequestBody String jsonObjectStr) {
         ResponseMessage responseMessage = new ResponseMessage();
+        try {
+            JSONObject jsonObject = new JSONObject(jsonObjectStr);
+            meumService.saveAndUpdateMeum(jsonObject);
+            responseMessage.setMess("success");
+            responseMessage.setSuccess(true);
+        } catch (Exception e) {
+            responseMessage.setMess(e.getMessage());
+            responseMessage.setSuccess(false);
+        }
+        return responseMessage;
+    }
+
+    @GetMapping("/selectMeum")
+    @ApiOperation(value = "获取菜单信息", httpMethod = "GET")
+    @ResponseBody
+    public ResponseMessage selectMeum(
+            @ApiParam(value = "菜单Id", required = false, name = "meumId") @RequestParam(name = "meumId", required = false) Long meumId,
+            @ApiParam(value = "菜单名称", required = false, name = "meumName") @RequestParam(name = "meumName", required = false) String meumName,
+            @ApiParam(value = "父菜单Id", required = false, name = "parentId") @RequestParam(name = "parentId", required = false) Long parentId,
+            @ApiParam(value = "父菜单名称", required = false, name = "parentMeumName") @RequestParam(name = "parentMeumName", required = false) String parentMeumName,
+            @ApiParam(value = "查询子项目深度,-1为全部树状结构", required = false, name = "needChild") @RequestParam(name = "needChild", required = false, defaultValue = "1") Integer needChild) {
+        ResponseMessage responseMessage = new ResponseMessage();
+        try {
+            responseMessage.setMess("success");
+            responseMessage.setSuccess(true);
+        } catch (Exception e) {
+            responseMessage.setMess(e.getMessage());
+            responseMessage.setSuccess(false);
+        }
         return responseMessage;
     }
 }
