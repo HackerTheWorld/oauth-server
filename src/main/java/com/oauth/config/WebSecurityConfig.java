@@ -20,7 +20,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
   @Override
   protected void configure(HttpSecurity http) throws Exception {
-    http.csrf().disable().authorizeRequests().antMatchers("/rsa/publicKey").permitAll()
+    http.csrf().disable().authorizeRequests().antMatchers("/rsa/**").permitAll()
         .requestMatchers(EndpointRequest.toAnyEndpoint()).permitAll().anyRequest().authenticated();
   }
 

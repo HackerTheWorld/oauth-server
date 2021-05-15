@@ -10,7 +10,7 @@ spring:
     active: dev
 
   application:
-    name: oauth2-auth
+    name: oauth-auth
   
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss

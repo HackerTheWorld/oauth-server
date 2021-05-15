@@ -3,6 +3,7 @@ package com.oauth.config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -54,8 +55,8 @@ public class Oauth2ServerConfig extends AuthorizationServerConfigurerAdapter {
     List<TokenEnhancer> delegates = new ArrayList<>();
     delegates.add(jwtTokenEnhancer);
     delegates.add(accessTokenConverter());
-    enhancerChain.setTokenEnhancers(delegates); // 配置JWT的内容增强器
-    endpoints.authenticationManager(authenticationManager).userDetailsService(userService) // 配置加载用户信息的服务
+    enhancerChain.setTokenEnhancers(delegates);
+    endpoints.authenticationManager(authenticationManager).userDetailsService(userService)
         .accessTokenConverter(accessTokenConverter()).tokenEnhancer(enhancerChain)
         .exceptionTranslator(loggingExceptionTranslator());
   }
@@ -72,7 +73,6 @@ public class Oauth2ServerConfig extends AuthorizationServerConfigurerAdapter {
     return jwtAccessTokenConverter;
   }
 
-  // 自定义捕获异常
   @Bean
   public WebResponseExceptionTranslator<OAuth2Exception> loggingExceptionTranslator() {
     return new DefaultWebResponseExceptionTranslator() {
@@ -92,7 +92,7 @@ public class Oauth2ServerConfig extends AuthorizationServerConfigurerAdapter {
   public KeyPair keyPair() {
     // 从classpath下的证书中获取秘钥对
     KeyStoreKeyFactory keyStoreKeyFactory = new KeyStoreKeyFactory(
-        new FileSystemResource("D:/javaWorkSpace/oauth-server/oauth-server/src/main/resources/jwt.jks"),
+        new ClassPathResource("jwt.jks"),
         "wh3164335".toCharArray());
     return keyStoreKeyFactory.getKeyPair("jwt", "wh3164335".toCharArray());
   }
