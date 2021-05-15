@@ -2,28 +2,15 @@ package com.oauth.entity;
 
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-
-@ApiModel("用户信息")
 public class UserInforEntity {
-    @ApiModelProperty("用户Id")
     private Long userId;
-    @ApiModelProperty("账户名称")
     private String username;
-    @ApiModelProperty("账户密码")
     private String password;
-    @ApiModelProperty("状态")
     private Integer status;
-    @ApiModelProperty("电话")
     private String phone;
-    @ApiModelProperty("真实性名")
     private String realname;
-    @ApiModelProperty("邮箱")
     private String email;
-    @JsonIgnore
+
     private List<ClientAuthoritiesEntity> roles;
 
     public List<ClientAuthoritiesEntity> getRoles() {

@@ -1,14 +1,9 @@
 package com.oauth.dao;
 
-import java.util.HashMap;
 import java.util.List;
 
 import com.oauth.entity.UserInforEntity;
-import com.oauth.tar.TreeEntityMapper;
-import com.oauth.tar.TreeTarget;
-import com.oauth.vo.UserInforVo;
-@TreeTarget(treeTarget = "UserInfoTree")
-public interface UserInforEntityMapper extends TreeEntityMapper<UserInforVo>{
+public interface UserInforEntityMapper {
     int deleteByPrimaryKey(Long id);
 
     int insert(UserInforEntity record);
@@ -22,15 +17,5 @@ public interface UserInforEntityMapper extends TreeEntityMapper<UserInforVo>{
     int updateByPrimaryKey(UserInforEntity record);
 
     List<UserInforEntity> selectByUsername(String username,Long userId);
-
-    List<Long> selectDepartmentByUsername(String username,Long userId);
-
-    List<Long> selectPostUserByName(Long postId, String post,String postCode);
-
-    List<Long> selectDepartmentUserByName(Long departmentId, String departmentName);
-
-    List<Long> selectParentUserByName(Long parentId, String parentName);
-
-    List<UserInforVo> selectUserInforVos(HashMap<String,Object> param,List<Long> userIds);
 
 }

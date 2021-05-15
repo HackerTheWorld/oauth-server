@@ -6,15 +6,12 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-import springfox.documentation.oas.annotations.EnableOpenApi;
-
 @EnableDiscoveryClient
 @SpringBootApplication
 @MapperScan("com.oauth.dao")
 @EnableTransactionManagement
-@EnableOpenApi
-public class Oauth2AuthApplication {
+public class OauthAuthApplication {
     public static void main(String[] args) {
-        SpringApplication.run(Oauth2AuthApplication.class, args);
+        SpringApplication.run(OauthAuthApplication.class, args);
     }
 }

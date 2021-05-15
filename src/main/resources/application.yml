@@ -23,7 +23,7 @@ spring:
 
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
-    url: jdbc:mysql://192.168.102.128:3306/jurisdiction?serverTimezone=GMT
+    url: jdbc:mysql://192.168.184.128:3306/jurisdiction?serverTimezone=GMT
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root 
     password: wh3164335
